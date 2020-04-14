@@ -6,5 +6,6 @@
     "outDir": "lib",
     "sourceMap": true,
     "module": "CommonJS"
-  }
+  },
+  "exclude": ["**/*.test.*"]
 }

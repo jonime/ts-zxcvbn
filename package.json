@@ -7,6 +7,7 @@
   "main": "lib/main.js",
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
+    "test": "jest",
     "build": "npm run build-lib && npm run build-dist",
     "build-lib": "rimraf lib && tsc",
     "build-dist": "browserify --debug --standalone zxcvbn -p tsify --extension='.ts' -t uglifyify src/main.ts | exorcist --base . dist/zxcvbn.js.map >| dist/zxcvbn.js",
@@ -16,8 +17,14 @@
     "build-keyboard-adjacency-graphs": "python data-scripts/build_keyboard_adjacency_graphs.py src/adjacency_graphs.ts"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-typescript": "^7.9.0",
+    "@types/jest": "^25.2.1",
+    "babel-jest": "^25.3.0",
     "browserify": "^11.0.1",
     "exorcist": "^0.4.0",
+    "jest": "^25.3.0",
     "rimraf": "^3.0.2",
     "tsify": "^4.0.1",
     "typescript": "^3.8.3",
