@@ -5,7 +5,8 @@
     "rootDir": "src",
     "outDir": "lib",
     "sourceMap": true,
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "declaration": true
   },
   "exclude": ["**/*.test.*"]
 }

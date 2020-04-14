@@ -5,6 +5,7 @@
   "author": "Joni Mertoniemi",
   "license": "MIT",
   "main": "lib/main.js",
+  "types": "lib/main.d.ts",
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
     "test": "jest",
