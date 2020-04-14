@@ -13,7 +13,7 @@ import feedback from './feedback';
 
 const time = () => new Date().getTime();
 
-const zxcvbn = function (password, user_inputs?: string[]) {
+const zxcvbn = function (password: string, user_inputs?: string[]) {
   if (user_inputs == null) {
     user_inputs = [];
   }
