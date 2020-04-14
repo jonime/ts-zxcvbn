@@ -5,7 +5,7 @@
   "author": "Joni Mertoniemi",
   "license": "MIT",
   "main": "lib/main.js",
-  "repository": "dropbox/zxcvbn",
+  "repository": "jonime/ts-zxcvbn",
   "scripts": {
     "build": "npm run build-lib && npm run build-dist",
     "build-lib": "rimraf lib && tsc",
