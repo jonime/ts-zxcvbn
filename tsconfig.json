@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["ES2019"],
+    "rootDir": "src",
+    "outDir": "lib",
+    "sourceMap": true,
+    "module": "CommonJS"
+  }
+}
