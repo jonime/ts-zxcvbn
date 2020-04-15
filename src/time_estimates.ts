@@ -25,7 +25,7 @@ const time_estimates = {
     return {
       crack_times_seconds,
       crack_times_display,
-      score: this.guesses_to_score(guesses),
+      score: time_estimates.guesses_to_score(guesses),
     };
   },
 

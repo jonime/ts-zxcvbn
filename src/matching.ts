@@ -116,7 +116,7 @@ const matching = {
   // omnimatch -- combine everything ----------------------------------------------
   // ------------------------------------------------------------------------------
 
-  omnimatch(password) {
+  omnimatch(password: string) {
     const matches = [];
     const matchers = [
       this.dictionary_match,
@@ -128,7 +128,7 @@ const matching = {
       this.regex_match,
       this.date_match,
     ];
-    for (let matcher of Array.from(matchers)) {
+    for (let matcher of matchers) {
       this.extend(matches, matcher.call(this, password));
     }
     return this.sorted(matches);

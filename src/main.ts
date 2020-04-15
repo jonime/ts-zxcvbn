@@ -11,31 +11,24 @@ import scoring from './scoring';
 import time_estimates from './time_estimates';
 import feedback from './feedback';
 
-const time = () => new Date().getTime();
-
 const zxcvbn = function (password: string, user_inputs?: string[]) {
-  if (user_inputs == null) {
-    user_inputs = [];
-  }
-  const start = time();
   // reset the user inputs matcher on a per-request basis to keep things stateless
-  const sanitized_inputs = [];
-  for (let arg of Array.from(user_inputs)) {
-    if (['string', 'number', 'boolean'].includes(typeof arg)) {
-      sanitized_inputs.push(arg.toString().toLowerCase());
-    }
-  }
+  const sanitized_inputs = (user_inputs ?? [])
+    .filter((input) => ['string', 'number', 'boolean'].includes(typeof input))
+    .map((input) => input.toLowerCase());
+
   matching.set_user_input_dictionary(sanitized_inputs);
+
   const matches = matching.omnimatch(password);
-  const result: any = scoring.most_guessable_match_sequence(password, matches);
-  result.calc_time = time() - start;
-  const attack_times = time_estimates.estimate_attack_times(result.guesses);
-  for (let prop in attack_times) {
-    const val = attack_times[prop];
-    result[prop] = val;
-  }
-  result.feedback = feedback.get_feedback(result.score, result.sequence);
-  return result;
+  const result = scoring.most_guessable_match_sequence(password, matches);
+
+  const { score } = time_estimates.estimate_attack_times(result.guesses);
+
+  return {
+    ...result,
+    score,
+    feedback: feedback.get_feedback(score, result.sequence),
+  };
 };
 
 export default zxcvbn;
