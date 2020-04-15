@@ -1,3 +1,8 @@
+export interface Result extends MatchingResult {
+  feedback: Feedback;
+  score: number;
+}
+
 export interface MatchingResult {
   password: string;
   guesses: number;

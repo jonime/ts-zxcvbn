@@ -10,8 +10,9 @@ import matching from './matching';
 import scoring from './scoring';
 import time_estimates from './time_estimates';
 import feedback from './feedback';
+import { MatchingResult, Result } from './types';
 
-const zxcvbn = function (password: string, user_inputs?: string[]) {
+const zxcvbn = function (password: string, user_inputs?: string[]): Result {
   // reset the user inputs matcher on a per-request basis to keep things stateless
   const sanitized_inputs = (user_inputs ?? [])
     .filter((input) => ['string', 'number', 'boolean'].includes(typeof input))
@@ -20,7 +21,10 @@ const zxcvbn = function (password: string, user_inputs?: string[]) {
   matching.set_user_input_dictionary(sanitized_inputs);
 
   const matches = matching.omnimatch(password);
-  const result = scoring.most_guessable_match_sequence(password, matches);
+  const result: MatchingResult = scoring.most_guessable_match_sequence(
+    password,
+    matches
+  );
 
   const { score } = time_estimates.estimate_attack_times(result.guesses);
 
