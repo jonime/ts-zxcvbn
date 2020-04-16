@@ -6,7 +6,8 @@
     "outDir": "lib",
     "sourceMap": true,
     "module": "CommonJS",
-    "declaration": true
+    "declaration": true,
+    "allowJs": true
   },
   "include": ["src"],
   "exclude": ["**/*.test.*"]

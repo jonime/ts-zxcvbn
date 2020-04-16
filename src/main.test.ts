@@ -24,4 +24,12 @@ describe('zxcvbn', () => {
       expect(result.score).toBe(4);
     });
   });
+
+  it('should survive long passowrds', () => {
+    const result = zxcvbn(
+      'sadfpokasdfopkpasodfpkoadfskopokpasdfopkadsfpkopokfasdkopfakopkfopdsa'
+    );
+
+    expect(result).toBeDefined();
+  });
 });

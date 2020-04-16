@@ -8,7 +8,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-
 let name;
 import frequency_lists from './frequency_lists';
 import adjacency_graphs from './adjacency_graphs';
@@ -17,7 +16,7 @@ import scoring from './scoring';
 const build_ranked_dict = function (ordered_list) {
   const result = {};
   let i = 1; // rank starts at 1, not 0
-  for (let word of ordered_list) {
+  for (let word of Array.from(ordered_list)) {
     result[word] = i;
     i += 1;
   }
@@ -99,8 +98,7 @@ const matching = {
     return lst.push.apply(lst, lst2);
   },
   translate(string, chr_map) {
-    return string
-      .split('')
+    return Array.from(string.split(''))
       .map((chr) => chr_map[chr] || chr)
       .join('');
   },
@@ -116,7 +114,7 @@ const matching = {
   // omnimatch -- combine everything ----------------------------------------------
   // ------------------------------------------------------------------------------
 
-  omnimatch(password: string) {
+  omnimatch(password) {
     const matches = [];
     const matchers = [
       this.dictionary_match,
@@ -128,7 +126,7 @@ const matching = {
       this.regex_match,
       this.date_match,
     ];
-    for (let matcher of matchers) {
+    for (let matcher of Array.from(matchers)) {
       this.extend(matches, matcher.call(this, password));
     }
     return this.sorted(matches);
@@ -188,14 +186,14 @@ const matching = {
       reversed_password,
       _ranked_dictionaries
     );
-    for (let match of matches) {
+    for (let match of Array.from(matches)) {
       match.token = match.token.split('').reverse().join(''); // reverse back
       match.reversed = true;
       // map coordinates back to original string
-      [match.i, match.j] = Array.from([
+      [match.i, match.j] = [
         password.length - 1 - match.j,
         password.length - 1 - match.i,
-      ]);
+      ];
     }
     return this.sorted(matches);
   },
@@ -212,14 +210,16 @@ const matching = {
 
   // makes a pruned copy of l33t_table that only includes password's possible substitutions
   relevant_l33t_subtable(password, table) {
-    const password_chars: any = {};
-    for (let chr of password.split('')) {
+    const password_chars = {};
+    for (let chr of Array.from(password.split(''))) {
       password_chars[chr] = true;
     }
     const subtable = {};
     for (let letter in table) {
       const subs = table[letter];
-      const relevant_subs = subs.filter((sub) => sub in password_chars);
+      const relevant_subs = Array.from(subs).filter(
+        (sub) => sub in password_chars
+      );
       if (relevant_subs.length > 0) {
         subtable[letter] = relevant_subs;
       }
@@ -243,7 +243,7 @@ const matching = {
       let v, k;
       const deduped = [];
       const members = {};
-      for (var sub of subs) {
+      for (var sub of Array.from(subs)) {
         var assoc = (() => {
           const result1 = [];
           for (v = 0; v < sub.length; v++) {
@@ -326,16 +326,17 @@ const matching = {
       _l33t_table = L33T_TABLE;
     }
     const matches = [];
-    for (let sub of this.enumerate_l33t_subs(
-      this.relevant_l33t_subtable(password, _l33t_table)
+    for (let sub of Array.from(
+      this.enumerate_l33t_subs(
+        this.relevant_l33t_subtable(password, _l33t_table)
+      )
     )) {
       if (this.empty(sub)) {
         break;
       } // corner case: password has no relevant subs.
       const subbed_password = this.translate(password, sub);
-      for (let match of this.dictionary_match(
-        subbed_password,
-        _ranked_dictionaries
+      for (let match of Array.from(
+        this.dictionary_match(subbed_password, _ranked_dictionaries)
       )) {
         token = password.slice(match.i, +match.j + 1 || undefined);
         if (token.toLowerCase() === match.matched_word) {
@@ -420,7 +421,7 @@ const matching = {
         // consider growing pattern by one character if j hasn't gone over the edge.
         if (j < password.length) {
           const cur_char = password.charAt(j);
-          for (let adj of adjacents) {
+          for (let adj of Array.from(adjacents)) {
             cur_direction += 1;
             if (adj && adj.indexOf(cur_char) !== -1) {
               found = true;
@@ -503,10 +504,7 @@ const matching = {
         match = lazy_match;
         base_token = match[1];
       }
-      const [i, j] = Array.from([
-        match.index,
-        match.index + match[0].length - 1,
-      ]);
+      const [i, j] = [match.index, match.index + match[0].length - 1];
       // recursively match and score the base string
       const base_analysis = scoring.most_guessable_match_sequence(
         base_token,
@@ -693,7 +691,7 @@ $\
           continue;
         }
         const candidates = [];
-        for (let [k, l] of DATE_SPLITS[token.length]) {
+        for (let [k, l] of Array.from(DATE_SPLITS[token.length])) {
           dmy = this.map_ints_to_dmy([
             parseInt(token.slice(0, k)),
             parseInt(token.slice(k, l)),
@@ -719,7 +717,7 @@ $\
         for (let candidate of Array.from(candidates.slice(1))) {
           const distance = metric(candidate);
           if (distance < min_distance) {
-            [best_candidate, min_distance] = Array.from([candidate, distance]);
+            [best_candidate, min_distance] = [candidate, distance];
           }
         }
         matches.push({

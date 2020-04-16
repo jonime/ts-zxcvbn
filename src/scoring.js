@@ -7,7 +7,6 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-
 let k, v;
 import adjacency_graphs from './adjacency_graphs';
 
@@ -113,11 +112,7 @@ const scoring = {
   //
   // ------------------------------------------------------------------------------
 
-  most_guessable_match_sequence(
-    password,
-    matches,
-    _exclude_additive?: boolean
-  ) {
+  most_guessable_match_sequence(password, matches, _exclude_additive) {
     let guesses, m;
     let asc4, end4;
     let _;
@@ -251,6 +246,7 @@ const scoring = {
               const object = optimal.m[i - 1];
               for (let l in object) {
                 const last_m = object[l];
+                l = parseInt(l);
                 // corner: an optimal sequence will never have two adjacent bruteforce matches.
                 // it is strictly better to have a single bruteforce match spanning the same region:
                 // same contribution to the guess product with a lower length.
@@ -312,6 +308,7 @@ const scoring = {
       for (m of Array.from(matches_by_j[k])) {
         if (m.i > 0) {
           for (let l in optimal.m[m.i - 1]) {
+            l = parseInt(l);
             update(m, l + 1);
           }
         } else {
