@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest",
     "build": "rimraf lib && tsc",
-    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
     "build-frequency-lists": "python data-scripts/build_frequency_lists.py data src/frequency_lists.ts",
     "build-keyboard-adjacency-graphs": "python data-scripts/build_keyboard_adjacency_graphs.py src/adjacency_graphs.ts"
