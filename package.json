@@ -1,6 +1,6 @@
 {
   "name": "ts-zxcvbn",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "realistic password strength estimation",
   "author": "Joni Mertoniemi",
   "license": "MIT",
