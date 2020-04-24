@@ -21,7 +21,7 @@ interface BaseMatch {
 
 export interface DictionaryMatch extends BaseMatch {
   pattern: 'dictionary';
-  dictionary_name: 'passwords';
+  dictionary_name: 'passwords' | 'names';
   rank: number;
   l33t: boolean;
   reversed: boolean;
@@ -83,4 +83,6 @@ export enum Warning {
   CommonPassword = 'CommonPassword',
   /** This is similar to a commonly used password */
   SimilarToCommonPassword = 'SimilarToCommonPassword',
+  /** This has name */
+  Name = 'Name',
 }

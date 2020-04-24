@@ -33,7 +33,7 @@ DICTIONARIES = dict(
     # english_wikipedia = 30000,
     passwords         = 30000,
     # surnames          = 10000,
-    # male_names        = None,
+    names        = None,
     # female_names      = None,
 )
 

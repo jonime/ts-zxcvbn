@@ -118,14 +118,16 @@ const feedback = {
     is_sole_match: boolean
   ): { warning: Warning; suggestions: string[] } {
     const warning = ((): Warning | null => {
-      if (match.dictionary_name === 'passwords') {
-        if (is_sole_match && !match.l33t && !match.reversed) {
-          return Warning.CommonPassword;
-        } else if (match.guesses_log10 <= 4) {
-          return Warning.SimilarToCommonPassword;
-        }
-      } else {
-        return null;
+      switch (match.dictionary_name) {
+        case 'passwords':
+          if (is_sole_match && !match.l33t && !match.reversed) {
+            return Warning.CommonPassword;
+          } else if (match.guesses_log10 <= 5) {
+            return Warning.SimilarToCommonPassword;
+          }
+          return null;
+        case 'names':
+          return Warning.Name;
       }
     })();
 
