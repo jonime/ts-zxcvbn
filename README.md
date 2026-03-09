@@ -26,13 +26,13 @@ On every push to `main` or `master`, GitHub Actions will:
 
 If releasable commits are present, it will publish to npm and create a GitHub release.
 
-### npm trusted publishing
+### npm Trusted Publishing (no npm tokens)
 
-This workflow is configured for npm trusted publishing from GitHub Actions (OIDC).
+Publishing uses [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers) with OIDC. You do **not** need to create or store any npm tokens.
 
-Required setup:
+Setup:
 
-- In npm package settings, add this GitHub repository/workflow as a trusted publisher.
-- Keep `id-token: write` permission in `.github/workflows/publish.yml`.
-- `GITHUB_TOKEN` is provided automatically by GitHub Actions.
-- `NPM_TOKEN` is **not required** when trusted publishing is configured correctly.
+1. In npm: package → **Settings** → **Trusted publishers** → Add **GitHub Actions**, and register this repo and workflow file (`.github/workflows/publish.yml`).
+2. In this repo: keep the `id-token: write` permission in `publish.yml` (already set).
+
+`GITHUB_TOKEN` is provided automatically by Actions. No `NPM_TOKEN` or other npm secrets are used.

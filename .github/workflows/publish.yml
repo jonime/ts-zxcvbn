@@ -6,8 +6,10 @@ on:
       - main
       - master
 
+# Trusted Publishing (OIDC): no NPM_TOKEN or other npm secrets required.
+# Register this workflow as a trusted publisher in npm package settings.
 permissions:
-  id-token: write # Required for OIDC
+  id-token: write # Required for npm Trusted Publishing (OIDC)
   contents: write # Required for @semantic-release/git to push release commit and tag
 
 jobs:
