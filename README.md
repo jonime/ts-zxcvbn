@@ -33,6 +33,6 @@ This workflow is configured for npm trusted publishing from GitHub Actions (OIDC
 Required setup:
 
 - In npm package settings, add this GitHub repository/workflow as a trusted publisher.
-- Keep `id-token: write` permission in `.github/workflows/release.yml`.
+- Keep `id-token: write` permission in `.github/workflows/publish.yml`.
 - `GITHUB_TOKEN` is provided automatically by GitHub Actions.
 - `NPM_TOKEN` is **not required** when trusted publishing is configured correctly.

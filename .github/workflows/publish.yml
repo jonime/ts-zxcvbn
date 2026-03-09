@@ -2,24 +2,30 @@ name: Publish Package
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+      - master
 
 permissions:
   id-token: write # Required for OIDC
-  contents: read
+  contents: write # Required for @semantic-release/git to push release commit and tag
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+
       - run: npm ci
       - run: npm run build
       - run: npm test
-      - run: npm publish
+      - run: npm run release
+        env:
+          NPM_CONFIG_PROVENANCE: true
