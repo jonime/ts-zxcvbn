@@ -5,11 +5,19 @@
   "author": "Joni Mertoniemi",
   "license": "MIT",
   "main": "lib/main.js",
+  "module": "lib-esm/main.js",
   "types": "lib/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib-esm/main.js",
+      "require": "./lib/main.js",
+      "types": "./lib/main.d.ts"
+    }
+  },
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
     "test": "jest",
-    "build": "rimraf lib && tsc",
+    "build": "rimraf lib lib-esm && tsc && tsc -p tsconfig.esm.json",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
     "build-frequency-lists": "python data-scripts/build_frequency_lists.py data src/frequency_lists.ts",

@@ -2,6 +2,8 @@
 
 This is typescript version of [zxcvbn](https://github.com/dropbox/zxcvbn)
 
+The package supports both CommonJS and ES module consumption: use `require('ts-zxcvbn')` or `import zxcvbn from 'ts-zxcvbn'`.
+
 ## Automated npm releases
 
 This repository is configured for automated semantic versioning and npm publishing via
