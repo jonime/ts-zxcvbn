@@ -13,7 +13,8 @@
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
     "build-frequency-lists": "python data-scripts/build_frequency_lists.py data src/frequency_lists.ts",
-    "build-keyboard-adjacency-graphs": "python data-scripts/build_keyboard_adjacency_graphs.py src/adjacency_graphs.ts"
+    "build-keyboard-adjacency-graphs": "python data-scripts/build_keyboard_adjacency_graphs.py src/adjacency_graphs.ts",
+    "release": "semantic-release"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -23,7 +24,14 @@
     "babel-jest": "^25.3.0",
     "jest": "^25.3.0",
     "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^11.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.1.4",
+    "@semantic-release/npm": "^11.0.3",
+    "@semantic-release/release-notes-generator": "^12.1.0",
+    "semantic-release": "^23.1.1"
   },
   "keywords": [
     "password",
