@@ -3,7 +3,7 @@ import { Match, Feedback, DictionaryMatch, Warning } from './types.js';
 
 const feedback = {
   default_feedback: {
-    warning: null,
+    warning: null as Warning | null,
     suggestions: [
       'Use a few words, avoid common phrases',
       'No need for symbols, digits, or uppercase letters',
@@ -120,7 +120,7 @@ const feedback = {
         break;
     }
 
-    const suggestions = [];
+    const suggestions: string[] = [];
     const word = match.token;
     if (word.match(scoring.START_UPPER)) {
       suggestions.push("Capitalization doesn't help very much");

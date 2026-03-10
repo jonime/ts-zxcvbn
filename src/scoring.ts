@@ -1,8 +1,13 @@
 import adjacency_graphs from './adjacency_graphs.js';
+import type { Match, MatchingResult } from './types.js';
+import type { BruteforceMatch, DictionaryMatch, RepeatMatch, SequenceMatch, RegexMatch, DateMatch, SpatialMatch } from './types.js';
+
+/** Adjacency graph: key -> array of adjacent key strings (or null for no neighbor). */
+type AdjacencyGraph = Record<string, (string | null)[]>;
 
 // on qwerty, 'g' has degree 6, being adjacent to 'ftyhbv'. '\' has degree 1.
 // this calculates the average over all keys.
-const calc_average_degree = function (graph) {
+function calc_average_degree(graph: AdjacencyGraph): number {
   let average = 0;
   for (const key of Object.keys(graph)) {
     const neighbors = graph[key];
@@ -10,7 +15,7 @@ const calc_average_degree = function (graph) {
   }
   average /= Object.keys(graph).length;
   return average;
-};
+}
 
 const BRUTEFORCE_CARDINALITY = 10;
 const MIN_GUESSES_BEFORE_GROWING_SEQUENCE = 10000;
@@ -18,7 +23,7 @@ const MIN_SUBMATCH_GUESSES_SINGLE_CHAR = 10;
 const MIN_SUBMATCH_GUESSES_MULTI_CHAR = 50;
 
 const scoring = {
-  nCk(n, k) {
+  nCk(n: number, k: number): number {
     // http://blog.plover.com/math/choose.html
     if (k > n) {
       return 0;
@@ -35,14 +40,14 @@ const scoring = {
     return r;
   },
 
-  log10(n) {
+  log10(n: number): number {
     return Math.log(n) / Math.log(10);
   }, // IE doesn't support Math.log10 :(
-  log2(n) {
+  log2(n: number): number {
     return Math.log(n) / Math.log(2);
   },
 
-  factorial(n) {
+  factorial(n: number): number {
     // unoptimized, called only on small n
     if (n < 2) {
       return 1;
@@ -87,24 +92,32 @@ const scoring = {
   //
   // ------------------------------------------------------------------------------
 
-  most_guessable_match_sequence(password, matches, _exclude_additive) {
-    let k;
+  most_guessable_match_sequence(
+    password: string,
+    matches: Match[],
+    _exclude_additive?: boolean
+  ): MatchingResult {
+    let k: number;
     if (_exclude_additive == null) {
       _exclude_additive = false;
     }
     const n = password.length;
 
     // partition matches into sublists according to ending index j
-    const matches_by_j = Array.from({ length: n }, () => []);
+    const matches_by_j: Match[][] = Array.from({ length: n }, (): Match[] => []);
     for (const m of Array.from(matches)) {
       matches_by_j[m.j].push(m);
     }
     // small detail: for deterministic output, sort each sublist by i.
-    for (let lst of Array.from(matches_by_j)) {
+    for (const lst of Array.from(matches_by_j)) {
       lst.sort((m1, m2) => m1.i - m2.i);
     }
 
-    const optimal = {
+    const optimal: {
+      m: Record<number, Match>[];
+      pi: Record<number, number>[];
+      g: Record<number, number>[];
+    } = {
       // optimal.m[k][l] holds final match in the best length-l match sequence covering the
       // password prefix up to k, inclusive.
       // if there is no length-l sequence that scores better (fewer guesses) than
@@ -119,9 +132,23 @@ const scoring = {
       g: Array.from({ length: n }, () => ({})),
     };
 
+    // helper: make bruteforce match objects spanning i to j, inclusive.
+    const make_bruteforce_match = (i: number, j: number): BruteforceMatch => {
+      const token = password.slice(i, j + 1);
+      const m: BruteforceMatch = {
+        pattern: 'bruteforce',
+        token,
+        i,
+        j,
+        guesses: 0,
+        guesses_log10: 0,
+      };
+      return m;
+    };
+
     // helper: considers whether a length-l sequence ending at match m is better (fewer guesses)
     // than previously encountered sequences, updating state if so.
-    const update = (m, l) => {
+    const update = (m: Match, l: number): void => {
       k = m.j;
       let pi = this.estimate_guesses(m, password);
       if (l > 1) {
@@ -138,7 +165,7 @@ const scoring = {
       // update state if new best.
       // first see if any competing sequences covering this prefix, with l or fewer matches,
       // fare better than this sequence. if so, skip it and return.
-      for (let competing_l in optimal.g[k]) {
+      for (const competing_l of Object.keys(optimal.g[k]).map(Number)) {
         const competing_g = optimal.g[k][competing_l];
         if (competing_l > l) {
           continue;
@@ -150,11 +177,11 @@ const scoring = {
       // this sequence might be part of the final optimal sequence.
       optimal.g[k][l] = g;
       optimal.m[k][l] = m;
-      return (optimal.pi[k][l] = pi);
+      optimal.pi[k][l] = pi;
     };
 
     // helper: evaluate bruteforce matches ending at k.
-    const bruteforce_update = (k) => {
+    const bruteforce_update = (k: number): void => {
       // see if a single bruteforce match spanning the k-prefix is optimal.
       let m = make_bruteforce_match(0, k);
       update(m, 1);
@@ -164,9 +191,9 @@ const scoring = {
         // leads to new bests.
         m = make_bruteforce_match(i, k);
         const object = optimal.m[i - 1];
-        for (let l in object) {
+        for (const l of Object.keys(object).map(Number)) {
           const last_m = object[l];
-          const l_val = parseInt(l);
+          const l_val = parseInt(String(l), 10);
           // corner: an optimal sequence will never have two adjacent bruteforce matches.
           // it is strictly better to have a single bruteforce match spanning the same region:
           // same contribution to the guess product with a lower length.
@@ -180,25 +207,15 @@ const scoring = {
       }
     };
 
-    // helper: make bruteforce match objects spanning i to j, inclusive.
-    const make_bruteforce_match = (i, j) => {
-      return {
-        pattern: 'bruteforce',
-        token: password.slice(i, +j + 1 || undefined),
-        i,
-        j,
-      };
-    };
-
     // helper: step backwards through optimal.m starting at the end,
     // constructing the final optimal match sequence.
-    const unwind = (n) => {
-      const optimal_match_sequence = [];
-      k = n - 1;
+    const unwind = (len: number): Match[] => {
+      const optimal_match_sequence: Match[] = [];
+      k = len - 1;
       // find the final best sequence length and score
-      let l = undefined;
+      let l: number | undefined;
       let g = Infinity;
-      for (let candidate_l in optimal.g[k]) {
+      for (const candidate_l of Object.keys(optimal.g[k]).map(Number)) {
         const candidate_g = optimal.g[k][candidate_l];
         if (candidate_g < g) {
           l = candidate_l;
@@ -206,7 +223,7 @@ const scoring = {
         }
       }
 
-      while (k >= 0) {
+      while (k >= 0 && l !== undefined) {
         const m = optimal.m[k][l];
         optimal_match_sequence.unshift(m);
         k = m.i - 1;
@@ -215,13 +232,13 @@ const scoring = {
       return optimal_match_sequence;
     };
 
-    let guesses;
+    let guesses: number;
     for (k = 0; k < n; k++) {
       for (const m of Array.from(matches_by_j[k])) {
         if (m.i > 0) {
-          for (let l in optimal.m[m.i - 1]) {
-            l = parseInt(l);
-            update(m, l + 1);
+          for (const l of Object.keys(optimal.m[m.i - 1]).map(Number)) {
+            const l_val = parseInt(String(l), 10);
+            update(m, l_val + 1);
           }
         } else {
           update(m, 1);
@@ -252,10 +269,11 @@ const scoring = {
   // guess estimation -- one function per match pattern ---------------------------
   // ------------------------------------------------------------------------------
 
-  estimate_guesses(match, password) {
-    if (match.guesses != null) {
+  estimate_guesses(match: Match, password: string): number {
+    // a match's guess estimate doesn't change. cache it. (skip when 0 — placeholder from matching)
+    if (match.guesses != null && match.guesses > 0) {
       return match.guesses;
-    } // a match's guess estimate doesn't change. cache it.
+    }
     let min_guesses = 1;
     if (match.token.length < password.length) {
       min_guesses =
@@ -263,22 +281,25 @@ const scoring = {
           ? MIN_SUBMATCH_GUESSES_SINGLE_CHAR
           : MIN_SUBMATCH_GUESSES_MULTI_CHAR;
     }
-    const estimation_functions = {
-      bruteforce: this.bruteforce_guesses,
-      dictionary: this.dictionary_guesses,
-      spatial: this.spatial_guesses,
-      repeat: this.repeat_guesses,
-      sequence: this.sequence_guesses,
-      regex: this.regex_guesses,
-      date: this.date_guesses,
+    const estimation_functions: Record<
+      string,
+      (match: Match) => number
+    > = {
+      bruteforce: this.bruteforce_guesses.bind(this),
+      dictionary: this.dictionary_guesses.bind(this),
+      spatial: this.spatial_guesses.bind(this),
+      repeat: this.repeat_guesses.bind(this),
+      sequence: this.sequence_guesses.bind(this),
+      regex: this.regex_guesses.bind(this),
+      date: this.date_guesses.bind(this),
     };
-    const guesses = estimation_functions[match.pattern].call(this, match);
+    const guesses = estimation_functions[match.pattern](match);
     match.guesses = Math.max(guesses, min_guesses);
     match.guesses_log10 = this.log10(match.guesses);
     return match.guesses;
   },
 
-  bruteforce_guesses(match) {
+  bruteforce_guesses(match: BruteforceMatch): number {
     let guesses = Math.pow(BRUTEFORCE_CARDINALITY, match.token.length);
     if (guesses === Number.POSITIVE_INFINITY) {
       guesses = Number.MAX_VALUE;
@@ -292,12 +313,12 @@ const scoring = {
     return Math.max(guesses, min_guesses);
   },
 
-  repeat_guesses(match) {
+  repeat_guesses(match: RepeatMatch): number {
     return match.base_guesses * match.repeat_count;
   },
 
-  sequence_guesses(match) {
-    let base_guesses;
+  sequence_guesses(match: SequenceMatch): number {
+    let base_guesses: number;
     const first_chr = match.token.charAt(0);
     // lower guesses for obvious starting points
     if (['a', 'A', 'z', 'Z', '0', '1', '9'].includes(first_chr)) {
@@ -322,8 +343,8 @@ const scoring = {
   MIN_YEAR_SPACE: 20,
   REFERENCE_YEAR: new Date().getFullYear(),
 
-  regex_guesses(match) {
-    const char_class_bases = {
+  regex_guesses(match: RegexMatch): number {
+    const char_class_bases: Record<string, number> = {
       alpha_lower: 26,
       alpha_upper: 26,
       alpha: 52,
@@ -339,16 +360,18 @@ const scoring = {
           // conservative estimate of year space: num years from REFERENCE_YEAR.
           // if year is close to REFERENCE_YEAR, estimate a year space of MIN_YEAR_SPACE.
           const year_space = Math.max(
-            Math.abs(parseInt(match.regex_match[0]) - this.REFERENCE_YEAR),
+            Math.abs(parseInt(match.regex_match[0], 10) - this.REFERENCE_YEAR),
             this.MIN_YEAR_SPACE
           );
           return year_space;
         }
+        default:
+          return 0;
       }
     }
   },
 
-  date_guesses(match) {
+  date_guesses(match: DateMatch): number {
     // base guesses: (year distance from REFERENCE_YEAR) * num_days * num_years
     const year_space = Math.max(
       Math.abs(match.year - this.REFERENCE_YEAR),
@@ -362,15 +385,15 @@ const scoring = {
     return guesses;
   },
 
-  KEYBOARD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.qwerty),
+  KEYBOARD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.qwerty as AdjacencyGraph),
   // slightly different for keypad/mac keypad, but close enough
-  KEYPAD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.keypad),
+  KEYPAD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.keypad as AdjacencyGraph),
 
   KEYBOARD_STARTING_POSITIONS: Object.keys(adjacency_graphs.qwerty).length,
   KEYPAD_STARTING_POSITIONS: Object.keys(adjacency_graphs.keypad).length,
 
-  spatial_guesses(match) {
-    let d, s;
+  spatial_guesses(match: SpatialMatch): number {
+    let d: number, s: number;
     if (['qwerty', 'dvorak'].includes(match.graph)) {
       s = this.KEYBOARD_STARTING_POSITIONS;
       d = this.KEYBOARD_AVERAGE_DEGREE;
@@ -406,15 +429,15 @@ const scoring = {
     return guesses;
   },
 
-  dictionary_guesses(match) {
+  dictionary_guesses(match: DictionaryMatch): number {
     match.base_guesses = match.rank; // keep these as properties for display purposes
     match.uppercase_variations = this.uppercase_variations(match);
     match.l33t_variations = this.l33t_variations(match);
     const reversed_variations = (match.reversed && 2) || 1;
     return (
-      match.base_guesses *
-      match.uppercase_variations *
-      match.l33t_variations *
+      match.base_guesses! *
+      match.uppercase_variations! *
+      match.l33t_variations! *
       reversed_variations
     );
   },
@@ -424,7 +447,7 @@ const scoring = {
   ALL_UPPER: /^[^a-z]+$/,
   ALL_LOWER: /^[^A-Z]+$/,
 
-  uppercase_variations(match) {
+  uppercase_variations(match: DictionaryMatch): number {
     const word = match.token;
     if (word.match(this.ALL_LOWER) || word.toLowerCase() === word) {
       return 1;
@@ -432,7 +455,7 @@ const scoring = {
     // a capitalized word is the most common capitalization scheme,
     // so it only doubles the search space (uncapitalized + capitalized).
     // allcaps and end-capitalized are common enough too, underestimate as 2x factor to be safe.
-    for (let regex of [this.START_UPPER, this.END_UPPER, this.ALL_UPPER]) {
+    for (const regex of [this.START_UPPER, this.END_UPPER, this.ALL_UPPER]) {
       if (word.match(regex)) {
         return 2;
       }
@@ -449,8 +472,8 @@ const scoring = {
     return variations;
   },
 
-  l33t_variations(match) {
-    if (!match.l33t) {
+  l33t_variations(match: DictionaryMatch): number {
+    if (!match.l33t || !match.sub) {
       return 1;
     }
     let variations = 1;

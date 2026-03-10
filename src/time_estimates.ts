@@ -1,5 +1,11 @@
+export interface AttackTimes {
+  crack_times_seconds: Record<string, number>;
+  crack_times_display: Record<string, string>;
+  score: number;
+}
+
 const time_estimates = {
-  estimate_attack_times(guesses) {
+  estimate_attack_times(guesses: number): AttackTimes {
     const crack_times_seconds = {
       online_throttling_100_per_hour: guesses / (100 / 3600),
       online_no_throttling_10_per_second: guesses / 10,
@@ -7,8 +13,8 @@ const time_estimates = {
       offline_fast_hashing_1e10_per_second: guesses / 1e10,
     };
 
-    const crack_times_display = {};
-    for (let scenario in crack_times_seconds) {
+    const crack_times_display: Record<string, string> = {};
+    for (const scenario of Object.keys(crack_times_seconds) as (keyof typeof crack_times_seconds)[]) {
       const seconds = crack_times_seconds[scenario];
       crack_times_display[scenario] = this.display_time(seconds);
     }
@@ -20,7 +26,7 @@ const time_estimates = {
     };
   },
 
-  guesses_to_score(guesses) {
+  guesses_to_score(guesses: number): number {
     const DELTA = 5;
     if (guesses < 1e3 + DELTA) {
       // risky password: "too guessable"
@@ -41,7 +47,7 @@ const time_estimates = {
     }
   },
 
-  display_time(seconds) {
+  display_time(seconds: number): string {
     const minute = 60;
     const hour = minute * 60;
     const day = hour * 24;

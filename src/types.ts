@@ -29,37 +29,64 @@ interface BaseMatch {
 
 export interface DictionaryMatch extends BaseMatch {
   pattern: 'dictionary';
-  dictionary_name: 'passwords' | 'names' | 'user_inputs';
+  /** e.g. 'passwords', 'names', 'user_inputs', or other list names from frequency data */
+  dictionary_name: string;
   rank: number;
+  /** matched word (lowercase) from the dictionary */
+  matched_word: string;
   l33t: boolean;
   reversed: boolean;
+  /** l33t substitution map (l33t char -> original char); set when l33t_match is used */
+  sub?: Record<string, string>;
+  sub_display?: string;
+  /** Set by scoring for display; base guess count from dictionary rank */
+  base_guesses?: number;
+  uppercase_variations?: number;
+  l33t_variations?: number;
 }
 
 export interface SpatialMatch extends BaseMatch {
   pattern: 'spatial';
   graph: string;
   turns: number;
+  shifted_count?: number;
 }
 
 export interface RepeatMatch extends BaseMatch {
   pattern: 'repeat';
   base_token: string;
+  base_guesses: number;
+  base_matches: Match[];
+  repeat_count: number;
 }
 
 export interface SequenceMatch extends BaseMatch {
   pattern: 'sequence';
+  sequence_name: string;
+  sequence_space: number;
+  ascending: boolean;
 }
 
 export interface RegexMatch extends BaseMatch {
   pattern: 'regex';
   regex_name: string;
+  regex_match: RegExpExecArray;
 }
 
 export interface DateMatch extends BaseMatch {
   pattern: 'date';
+  year: number;
+  month: number;
+  day: number;
+  separator?: string;
+}
+
+export interface BruteforceMatch extends BaseMatch {
+  pattern: 'bruteforce';
 }
 
 export type Match =
+  | BruteforceMatch
   | DictionaryMatch
   | SpatialMatch
   | RepeatMatch

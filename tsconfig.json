@@ -8,7 +8,7 @@
     "sourceMap": true,
     "module": "CommonJS",
     "declaration": true,
-    "allowJs": true,
+    "noImplicitAny": true,
     "types": ["vitest/globals"]
   },
   "include": ["src"]
