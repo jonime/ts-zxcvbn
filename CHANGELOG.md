@@ -1,3 +1,10 @@
+# [6.1.0](https://github.com/jonime/ts-zxcvbn/compare/v6.0.0...v6.1.0) (2026-03-10)
+
+
+### Features
+
+* Remove regex from repeat_match function ([b72d759](https://github.com/jonime/ts-zxcvbn/commit/b72d75962247be2483a7fbba42c92a9ded2a8bf0))
+
 # [6.0.0](https://github.com/jonime/ts-zxcvbn/compare/v5.2.1...v6.0.0) (2026-03-10)
 
 
