@@ -426,28 +426,38 @@ const matching = {
 
   repeat_match(password: string): RepeatMatch[] {
     const matches: RepeatMatch[] = [];
-    const greedy = /(.+)\1+/g;
-    const lazy = /(.+?)\1+/g;
-    const lazy_anchored = /^(.+?)\1+$/;
     let lastIndex = 0;
-    while (lastIndex < password.length) {
-      let base_token: string;
-      let match: RegExpExecArray;
-      greedy.lastIndex = lazy.lastIndex = lastIndex;
-      const greedy_match = greedy.exec(password);
-      const lazy_match = lazy.exec(password);
-      if (greedy_match == null || lazy_match == null) {
+    const n = password.length;
+    while (lastIndex < n) {
+      let bestRunLength = 0;
+      let bestPeriod = 0;
+      const maxPeriod = Math.floor((n - lastIndex) / 2);
+      for (let period = 1; period <= maxPeriod; period += 1) {
+        const base = password.slice(lastIndex, lastIndex + period);
+        let count = 0;
+        let pos = lastIndex;
+        while (
+          pos + period <= n &&
+          password.slice(pos, pos + period) === base
+        ) {
+          count += 1;
+          pos += period;
+        }
+        if (count >= 2) {
+          const runLength = count * period;
+          if (runLength > bestRunLength) {
+            bestRunLength = runLength;
+            bestPeriod = period;
+          }
+        }
+      }
+      if (bestPeriod === 0) {
         break;
       }
-      if (greedy_match[0].length > lazy_match[0].length) {
-        match = greedy_match;
-        const anchored = lazy_anchored.exec(match[0]);
-        base_token = anchored ? anchored[1] : match[1];
-      } else {
-        match = lazy_match;
-        base_token = match[1];
-      }
-      const [i, j] = [match.index, match.index + match[0].length - 1];
+      const base_token = password.slice(lastIndex, lastIndex + bestPeriod);
+      const token = password.slice(lastIndex, lastIndex + bestRunLength);
+      const i = lastIndex;
+      const j = lastIndex + bestRunLength - 1;
       const base_analysis = scoring.most_guessable_match_sequence(
         base_token,
         this.omnimatch(base_token)
@@ -458,11 +468,11 @@ const matching = {
         pattern: 'repeat',
         i,
         j,
-        token: match[0],
+        token,
         base_token,
         base_guesses,
         base_matches,
-        repeat_count: match[0].length / base_token.length,
+        repeat_count: bestRunLength / bestPeriod,
         guesses: 0,
         guesses_log10: 0,
       });
