@@ -59,22 +59,20 @@ const feedback = {
         return feedback.get_dictionary_match_feedback(match, is_sole_match);
 
       case 'spatial':
-        var warning =
-          match.turns === 1
-            ? Warning.SpatialStraightRow
-            : Warning.SpatialShortKeyboardPattern;
         return {
-          warning,
+          warning:
+            match.turns === 1
+              ? Warning.SpatialStraightRow
+              : Warning.SpatialShortKeyboardPattern,
           suggestions: ['Use a longer keyboard pattern with more turns'],
         };
 
       case 'repeat':
-        warning =
-          match.base_token.length === 1
-            ? Warning.RepeatCharacter
-            : Warning.RepeatPattern;
         return {
-          warning,
+          warning:
+            match.base_token.length === 1
+              ? Warning.RepeatCharacter
+              : Warning.RepeatPattern,
           suggestions: ['Avoid repeated words and characters'],
         };
 
@@ -108,19 +106,19 @@ const feedback = {
     match: DictionaryMatch,
     is_sole_match: boolean
   ): { warning: Warning; suggestions: string[] } {
-    const warning = ((): Warning | null => {
-      switch (match.dictionary_name) {
-        case 'passwords':
-          if (is_sole_match && !match.l33t && !match.reversed) {
-            return Warning.CommonPassword;
-          } else if (match.guesses_log10 <= 5) {
-            return Warning.SimilarToCommonPassword;
-          }
-          return null;
-        case 'names':
-          return Warning.Name;
-      }
-    })();
+    let warning: Warning | null = null;
+    switch (match.dictionary_name) {
+      case 'passwords':
+        if (is_sole_match && !match.l33t && !match.reversed) {
+          warning = Warning.CommonPassword;
+        } else if (match.guesses_log10 <= 5) {
+          warning = Warning.SimilarToCommonPassword;
+        }
+        break;
+      case 'names':
+        warning = Warning.Name;
+        break;
+    }
 
     const suggestions = [];
     const word = match.token;
