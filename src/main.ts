@@ -6,11 +6,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
-import matching from './matching';
-import scoring from './scoring';
-import time_estimates from './time_estimates';
-import feedback from './feedback';
-import { MatchingResult, Result } from './types';
+import matching from './matching.js';
+import scoring from './scoring.js';
+import time_estimates from './time_estimates.js';
+import feedback from './feedback.js';
+import { MatchingResult, Result } from './types.js';
 
 const zxcvbn = function (password: string, user_inputs?: string[]): Result {
   // reset the user inputs matcher on a per-request basis to keep things stateless

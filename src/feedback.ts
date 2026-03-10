@@ -7,8 +7,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 
-import scoring from './scoring';
-import { Match, Feedback, DictionaryMatch, Warning } from './types';
+import scoring from './scoring.js';
+import { Match, Feedback, DictionaryMatch, Warning } from './types.js';
 
 const feedback = {
   default_feedback: {

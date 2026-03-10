@@ -1,5 +1,5 @@
-import zxcvbn from './main';
-import { Warning } from './types';
+import zxcvbn from './main.js';
+import { Warning } from './types.js';
 
 describe('zxcvbn', () => {
   describe('with "password"', () => {

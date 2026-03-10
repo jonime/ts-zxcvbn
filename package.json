@@ -4,20 +4,20 @@
   "description": "realistic password strength estimation",
   "author": "Joni Mertoniemi",
   "license": "MIT",
-  "main": "lib/main.js",
-  "module": "lib-esm/main.js",
-  "types": "lib/main.d.ts",
+  "main": "dist/main.js",
+  "module": "dist/main.mjs",
+  "types": "dist/main.d.ts",
   "exports": {
     ".": {
-      "import": "./lib-esm/main.js",
-      "require": "./lib/main.js",
-      "types": "./lib/main.d.ts"
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.js"
     }
   },
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
     "test": "jest",
-    "build": "rimraf lib lib-esm && tsc && tsc -p tsconfig.esm.json",
+    "build": "tsup",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
     "build-frequency-lists": "python data-scripts/build_frequency_lists.py data src/frequency_lists.ts",
@@ -28,19 +28,20 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-typescript": "^7.9.0",
-    "@types/jest": "^25.2.1",
-    "babel-jest": "^25.3.0",
-    "jest": "^25.3.0",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.8.3",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.1.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.1.4",
     "@semantic-release/npm": "^13.0.0",
     "@semantic-release/release-notes-generator": "^12.1.0",
+    "@types/jest": "^25.2.1",
+    "babel-jest": "^25.3.0",
     "conventional-changelog-conventionalcommits": "^9.0.0",
-    "semantic-release": "^23.1.1"
+    "jest": "^25.3.0",
+    "rimraf": "^3.0.2",
+    "semantic-release": "^23.1.1",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3"
   },
   "overrides": {
     "@semantic-release/npm": "^13.0.0"

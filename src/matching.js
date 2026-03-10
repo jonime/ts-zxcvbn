@@ -9,9 +9,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 let name;
-import frequency_lists from './frequency_lists';
-import adjacency_graphs from './adjacency_graphs';
-import scoring from './scoring';
+import frequency_lists from './frequency_lists.js';
+import adjacency_graphs from './adjacency_graphs.js';
+import scoring from './scoring.js';
 
 const build_ranked_dict = function (ordered_list) {
   const result = {};
