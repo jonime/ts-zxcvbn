@@ -3,3 +3,6 @@ dist
 lib
 lib-esm
 .env
+
+tests/packaging/node_modules/
+tests/packaging/package-lock.json

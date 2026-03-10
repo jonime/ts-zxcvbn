@@ -1,0 +1,13 @@
+{
+  "name": "ts-zxcvbn-packaging-test",
+  "private": true,
+  "description": "In-repo consumer to verify CJS/ESM packaging of ts-zxcvbn",
+  "dependencies": {
+    "ts-zxcvbn": "file:../.."
+  },
+  "scripts": {
+    "test:cjs": "node test-cjs.cjs",
+    "test:esm": "node test-esm.mjs",
+    "test": "npm run test:cjs && npm run test:esm"
+  }
+}

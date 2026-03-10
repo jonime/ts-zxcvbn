@@ -21,7 +21,8 @@
     }
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest && npm run test:packaging",
+    "test:packaging": "npm run build && cd tests/packaging && npm install && npm test",
     "build": "tsup",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
