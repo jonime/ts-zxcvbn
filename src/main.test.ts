@@ -25,9 +25,32 @@ describe('zxcvbn', () => {
     expect(result.feedback.warning).toBe(Warning.SimilarToCommonPassword);
   });
 
-  it('should have warning about name', () => {
-    const result = zxcvbn('Joni');
+  it('should have warning about name when names option is provided', () => {
+    const result = zxcvbn('Joni', { names: ['joni'] });
     expect(result.feedback.warning).toBe(Warning.Name);
+    const nameMatch = result.sequence.find(
+      (m) => m.pattern === 'dictionary' && m.dictionary_name === 'names'
+    );
+    expect(nameMatch).toBeDefined();
+    expect(nameMatch?.token.toLowerCase()).toBe('joni');
+  });
+
+  it('should not match names when no names option is provided', () => {
+    const result = zxcvbn('antti');
+    expect(result.feedback.warning).not.toBe(Warning.Name);
+    const nameMatch = result.sequence.find(
+      (m) => m.pattern === 'dictionary' && m.dictionary_name === 'names'
+    );
+    expect(nameMatch).toBeUndefined();
+  });
+
+  it('should accept legacy user_inputs array as second argument', () => {
+    const result = zxcvbn('custominput', ['custominput']);
+    expect(result.score).toBe(0);
+    const match = result.sequence.find(
+      (m) => m.pattern === 'dictionary' && m.dictionary_name === 'user_inputs'
+    );
+    expect(match).toBeDefined();
   });
 
   it('should have warning about spatial straight row', () => {

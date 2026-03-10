@@ -177,6 +177,11 @@ const matching = {
     ));
   },
 
+  set_names_dictionary(ordered_list) {
+    const list = ordered_list && ordered_list.length ? ordered_list.slice() : [];
+    return (RANKED_DICTIONARIES['names'] = build_ranked_dict(list));
+  },
+
   //-------------------------------------------------------------------------------
   // dictionary match with common l33t substitutions ------------------------------
   //-------------------------------------------------------------------------------

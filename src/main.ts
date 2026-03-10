@@ -2,15 +2,31 @@ import matching from './matching.js';
 import scoring from './scoring.js';
 import time_estimates from './time_estimates.js';
 import feedback from './feedback.js';
-import { MatchingResult, Result } from './types.js';
+import { MatchingResult, Result, ZxcvbnOptions } from './types.js';
 
-const zxcvbn = function (password: string, user_inputs?: string[]): Result {
-  // reset the user inputs matcher on a per-request basis to keep things stateless
-  const sanitized_inputs = (user_inputs ?? [])
-    .filter((input) => ['string', 'number', 'boolean'].includes(typeof input))
-    .map((input) => input.toLowerCase());
+function sanitize_string_list(list: unknown[]): string[] {
+  return list
+    .filter((x) => ['string', 'number', 'boolean'].includes(typeof x))
+    .map((x) => String(x).toLowerCase());
+}
 
-  matching.set_user_input_dictionary(sanitized_inputs);
+const zxcvbn = function (
+  password: string,
+  options?: string[] | ZxcvbnOptions | null
+): Result {
+  const user_inputs: string[] = Array.isArray(options)
+    ? sanitize_string_list(options)
+    : options && typeof options === 'object'
+      ? sanitize_string_list(options.user_inputs ?? [])
+      : [];
+
+  const names: string[] =
+    options && typeof options === 'object' && !Array.isArray(options)
+      ? sanitize_string_list(options.names ?? [])
+      : [];
+
+  matching.set_user_input_dictionary(user_inputs);
+  matching.set_names_dictionary(names);
 
   const matches = matching.omnimatch(password);
   const result: MatchingResult = scoring.most_guessable_match_sequence(
@@ -28,3 +44,5 @@ const zxcvbn = function (password: string, user_inputs?: string[]): Result {
 };
 
 export default zxcvbn;
+export { default as finnishNames } from './names/finnish.js';
+export { default as englishNames } from './names/english.js';
