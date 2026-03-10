@@ -3,11 +3,13 @@
   "private": true,
   "description": "In-repo consumer to verify CJS/ESM packaging of ts-zxcvbn",
   "dependencies": {
+    "esbuild": "^0.24.0",
     "ts-zxcvbn": "file:../.."
   },
   "scripts": {
     "test:cjs": "node test-cjs.cjs",
     "test:esm": "node test-esm.mjs",
-    "test": "npm run test:cjs && npm run test:esm"
+    "test:tree-shake": "node check-tree-shake.mjs",
+    "test": "npm run test:cjs && npm run test:esm && npm run test:tree-shake"
   }
 }

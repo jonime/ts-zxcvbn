@@ -21,7 +21,8 @@ Returns a `Result` object with:
 ## Example
 
 ```ts
-import zxcvbn, { englishNames } from 'ts-zxcvbn'
+import zxcvbn from 'ts-zxcvbn'
+import englishNames from 'ts-zxcvbn/names/english'
 
 const result = zxcvbn('myCompanyName2026', {
   user_inputs: ['myCompanyName', 'name@example.com'],

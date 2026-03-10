@@ -44,5 +44,3 @@ const zxcvbn = function (
 };
 
 export default zxcvbn;
-export { default as finnishNames } from './names/finnish.js';
-export { default as englishNames } from './names/english.js';
