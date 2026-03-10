@@ -34,7 +34,10 @@
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
     "build-frequency-lists": "tsx data-scripts/build_frequency_lists.ts data src/frequency_lists.ts",
     "build-keyboard-adjacency-graphs": "tsx data-scripts/build_keyboard_adjacency_graphs.ts src/adjacency_graphs.ts",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",
@@ -50,7 +53,8 @@
     "semantic-release": "25.0.3",
     "tsup": "8.5.1",
     "tsx": "4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitepress": "1.6.4"
   },
   "keywords": [
     "password",
