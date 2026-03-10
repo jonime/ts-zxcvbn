@@ -4,6 +4,7 @@
   "description": "realistic password strength estimation",
   "author": "Joni Mertoniemi",
   "license": "MIT",
+  "homepage": "https://jonime.github.io/ts-zxcvbn/",
   "main": "dist/main.js",
   "module": "dist/main.mjs",
   "types": "dist/main.d.ts",

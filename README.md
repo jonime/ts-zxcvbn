@@ -1,6 +1,10 @@
 # ts-zxcvbn
 
+[![CI](https://github.com/jonime/ts-zxcvbn/actions/workflows/ci.yml/badge.svg)](https://github.com/jonime/ts-zxcvbn/actions/workflows/ci.yml) [![npm version](https://img.shields.io/npm/v/ts-zxcvbn)](https://www.npmjs.com/package/ts-zxcvbn)
+
 TypeScript port of Dropbox's [zxcvbn](https://github.com/dropbox/zxcvbn): a realistic password strength estimator that analyzes patterns instead of just character classes.
+
+**Documentation:** [https://jonime.github.io/ts-zxcvbn/](https://jonime.github.io/ts-zxcvbn/)
 
 ## Installation
 
