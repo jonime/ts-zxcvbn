@@ -15,6 +15,11 @@
     }
   },
   "repository": "jonime/ts-zxcvbn",
+  "jest": {
+    "moduleNameMapper": {
+      "^\\.(.*)\\.js$": ".$1"
+    }
+  },
   "scripts": {
     "test": "jest",
     "build": "tsup",
