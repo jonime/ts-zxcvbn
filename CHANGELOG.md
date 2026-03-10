@@ -1,3 +1,10 @@
+## [5.2.1](https://github.com/jonime/ts-zxcvbn/compare/v5.2.0...v5.2.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* Convert javscript files to typescript ([0296c42](https://github.com/jonime/ts-zxcvbn/commit/0296c429d28dba98f0edfc69151373caf0221c82))
+
 # [5.2.0](https://github.com/jonime/ts-zxcvbn/compare/v5.1.1...v5.2.0) (2026-03-10)
 
 
