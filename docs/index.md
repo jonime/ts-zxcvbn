@@ -22,19 +22,16 @@ console.log(result.feedback)
 
 ## Optional name lists
 
-Name lists are split into separate entrypoints so the main bundle stays small.
+Name lists are in separate entry points so the main bundle stays small. Import only the list you need:
 
 ```ts
-import zxcvbn, { finnishNames, englishNames } from 'ts-zxcvbn'
+import zxcvbn from 'ts-zxcvbn'
+import finnishNames from 'ts-zxcvbn/names/finnish'
 
 zxcvbn('antti123', { names: finnishNames })
 ```
 
-You can also import just one list:
-
-```ts
-import finnishNames from 'ts-zxcvbn/names/finnish'
-```
+English: `import englishNames from 'ts-zxcvbn/names/english'`
 
 ## Why this package
 

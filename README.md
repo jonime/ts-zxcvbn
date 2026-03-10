@@ -39,18 +39,16 @@ const zxcvbn = require('ts-zxcvbn')
   - **Legacy:** an array of user-specific strings (name, email, company, etc.) to penalize if they appear in the password. Same as `{ user_inputs: [...] }`.
   - **Options object:** `{ user_inputs?: string[]; names?: string[] }` — `user_inputs` are custom strings to match; `names` is an optional name list so that common first/last names in the password trigger the “Name” warning. By default no name list is included (keeps the main bundle small).
 
-**Optional name lists** (opt-in; not included in the default import):
+**Optional name lists** (opt-in; import from separate entry points to keep the main bundle small):
 
 ```ts
-import zxcvbn, { finnishNames, englishNames } from 'ts-zxcvbn'
-
-// Use Finnish names for the "Name" warning
-zxcvbn('antti123', { names: finnishNames })
-
-// Or use the subpath to load only the list you need
+import zxcvbn from 'ts-zxcvbn'
 import finnishNames from 'ts-zxcvbn/names/finnish'
-zxcvbn('password', { names: finnishNames })
+
+zxcvbn('antti123', { names: finnishNames })
 ```
+
+English names: `import englishNames from 'ts-zxcvbn/names/english'`
 
 Returns a `Result` object:
 
@@ -86,7 +84,7 @@ It keeps the same core approach while offering modern npm packaging (ESM + CJS +
 npm install
 npm run build
 npm test
-npm run test:packaging   # build, bundle size check, and CJS/ESM consumer tests
+npm run test:packaging   # build, bundle size check, tree-shake check, and CJS/ESM consumer tests
 ```
 
 The packaging test ensures the main bundle size does not increase (optional name lists are separate entry points).

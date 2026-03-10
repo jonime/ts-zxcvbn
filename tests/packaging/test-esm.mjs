@@ -1,5 +1,6 @@
 // Test that ts-zxcvbn resolves to ESM build (exports.import)
-import zxcvbn, { finnishNames } from 'ts-zxcvbn';
+import zxcvbn from 'ts-zxcvbn';
+import finnishNames from 'ts-zxcvbn/names/finnish';
 
 const result = zxcvbn('password123');
 if (typeof result.score !== 'number' || result.score < 0 || result.score > 4) {
