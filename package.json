@@ -39,7 +39,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.1.4",
     "@semantic-release/npm": "^13.0.0",
-    "@semantic-release/release-notes-generator": "^12.1.0",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/jest": "^25.2.1",
     "babel-jest": "^30.3.0",
     "conventional-changelog-conventionalcommits": "^9.0.0",
