@@ -91,6 +91,8 @@ npm run test:packaging   # build, bundle size check, and CJS/ESM consumer tests
 
 The packaging test ensures the main bundle size does not increase (optional name lists are separate entry points).
 
+**AI agents:** See [AGENTS.md](AGENTS.md) for conventions on updating README/docs, adding tests, and committing.
+
 ## Automated npm releases
 
 This repository is configured for automated semantic versioning and npm publishing via
