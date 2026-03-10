@@ -1,8 +1,73 @@
 # ts-zxcvbn
 
-This is typescript version of [zxcvbn](https://github.com/dropbox/zxcvbn)
+TypeScript port of Dropbox's [zxcvbn](https://github.com/dropbox/zxcvbn): a realistic password strength estimator that analyzes patterns instead of just character classes.
 
-The package supports both CommonJS and ES module consumption: use `require('ts-zxcvbn')` or `import zxcvbn from 'ts-zxcvbn'`.
+## Installation
+
+```bash
+npm install ts-zxcvbn
+```
+
+## Quick start
+
+```ts
+import zxcvbn from 'ts-zxcvbn'
+
+const result = zxcvbn('Tr0ub4dour&3')
+
+console.log(result.score)         // 0..4
+console.log(result.guesses)       // estimated guesses required
+console.log(result.feedback)      // warning + suggestions for weak passwords
+```
+
+CommonJS is also supported:
+
+```js
+const zxcvbn = require('ts-zxcvbn')
+```
+
+## API
+
+### `zxcvbn(password, userInputs?)`
+
+- `password: string` — password to estimate.
+- `userInputs?: string[]` — optional user-specific words (name, email, company, etc.) that should be penalized if they appear in the password.
+
+Returns a `Result` object:
+
+- `score: number` — integer from `0` (weakest) to `4` (strongest).
+- `guesses: number` — estimated guesses needed to crack.
+- `guesses_log10: number` — `log10(guesses)`.
+- `sequence: Match[]` — matched patterns used for scoring.
+- `feedback: { warning: Warning | null; suggestions: string[] }` — guidance for improvement.
+- `password: string` — the analyzed password.
+
+Type definitions are bundled, so TypeScript users get autocomplete and static types out of the box.
+
+## Notes for npm/package consumers
+
+- ✅ **Dual module support**: works with both ESM and CommonJS.
+- ✅ **Types included**: `dist/main.d.ts` is published with the package.
+- ✅ **Exports map**: package uses explicit `exports` for predictable resolution.
+
+## Differences vs original Dropbox zxcvbn
+
+This package is a TypeScript-maintained fork of the original algorithm and data.
+It keeps the same core approach while offering modern npm packaging (ESM + CJS + types).
+
+## Practical integration advice
+
+- Run estimation in the browser at password-entry time for immediate feedback.
+- If performance is sensitive, call only when the user pauses typing (debounce).
+- Pass user-specific inputs (`userInputs`) to avoid overestimating passwords containing personal/company data.
+
+## Development
+
+```bash
+npm install
+npm run build
+npm test
+```
 
 ## Automated npm releases
 
