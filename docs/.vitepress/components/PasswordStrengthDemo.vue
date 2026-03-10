@@ -1,30 +1,37 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import zxcvbn from 'ts-zxcvbn'
+import { computed, ref } from 'vue';
+import zxcvbn from 'ts-zxcvbn';
 
-const password = ref('Tr0ub4dour&3')
-const inputs = ref('john, example.com')
+const password = ref('Tr0ub4dour&3');
+const inputs = ref('');
 
 const userInputs = computed(() =>
   inputs.value
     .split(',')
     .map((value) => value.trim())
     .filter(Boolean)
-)
+);
 
-const result = computed(() => zxcvbn(password.value, { user_inputs: userInputs.value }))
+const result = computed(() =>
+  zxcvbn(password.value, { user_inputs: userInputs.value })
+);
 
 const scoreLabel = computed(() => {
-  const labels = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong']
-  return labels[result.value.score] ?? 'Unknown'
-})
+  const labels = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+  return labels[result.value.score] ?? 'Unknown';
+});
 </script>
 
 <template>
   <div class="demo-wrap">
     <label>
       Password
-      <input v-model="password" type="text" autocomplete="off" spellcheck="false" />
+      <input
+        v-model="password"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+      />
     </label>
 
     <label>
@@ -39,11 +46,14 @@ const scoreLabel = computed(() => {
     </label>
 
     <div class="stats">
-      <p><strong>Score:</strong> {{ result.score }} / 4 ({{ scoreLabel }})</p>
-      <p><strong>Estimated guesses:</strong> {{ result.guesses.toLocaleString() }}</p>
-      <p><strong>Warning:</strong> {{ result.feedback.warning ?? 'None' }}</p>
+      <p><strong>Score: </strong>{{ result.score }} / 4 ({{ scoreLabel }})</p>
       <p>
-        <strong>Suggestions:</strong>
+        <strong>Estimated guesses: </strong>
+        {{ result.guesses.toLocaleString() }}
+      </p>
+      <p><strong>Warning: </strong>{{ result.feedback.warning ?? 'None' }}</p>
+      <p>
+        <strong>Suggestions: </strong>
         <span v-if="result.feedback.suggestions.length">
           {{ result.feedback.suggestions.join(' ') }}
         </span>
