@@ -1,14 +1,16 @@
 import scoring from './scoring.js';
 import { Match, Feedback, DictionaryMatch, Warning } from './types.js';
 
+const default_feedback: Feedback = {
+  warning: null,
+  suggestions: [
+    'Use a few words, avoid common phrases',
+    'No need for symbols, digits, or uppercase letters',
+  ],
+};
+
 const feedback = {
-  default_feedback: {
-    warning: null as Warning | null,
-    suggestions: [
-      'Use a few words, avoid common phrases',
-      'No need for symbols, digits, or uppercase letters',
-    ],
-  },
+  default_feedback,
 
   get_feedback(score: number, sequence: Match[]): Feedback {
     // starting feedback

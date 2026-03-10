@@ -385,9 +385,9 @@ const scoring = {
     return guesses;
   },
 
-  KEYBOARD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.qwerty as AdjacencyGraph),
+  KEYBOARD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.qwerty),
   // slightly different for keypad/mac keypad, but close enough
-  KEYPAD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.keypad as AdjacencyGraph),
+  KEYPAD_AVERAGE_DEGREE: calc_average_degree(adjacency_graphs.keypad),
 
   KEYBOARD_STARTING_POSITIONS: Object.keys(adjacency_graphs.qwerty).length,
   KEYPAD_STARTING_POSITIONS: Object.keys(adjacency_graphs.keypad).length,

@@ -14,8 +14,7 @@ const time_estimates = {
     };
 
     const crack_times_display: Record<string, string> = {};
-    for (const scenario of Object.keys(crack_times_seconds) as (keyof typeof crack_times_seconds)[]) {
-      const seconds = crack_times_seconds[scenario];
+    for (const [scenario, seconds] of Object.entries(crack_times_seconds)) {
       crack_times_display[scenario] = this.display_time(seconds);
     }
 

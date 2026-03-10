@@ -27,16 +27,16 @@ function build_ranked_dict(ordered_list: readonly string[]): Record<string, numb
 }
 
 const RANKED_DICTIONARIES: RankedDictionaries = {};
-for (const name of Object.keys(frequency_lists as Record<string, string[]>)) {
-  const lst = (frequency_lists as Record<string, string[]>)[name];
+for (const name of Object.keys(frequency_lists)) {
+  const lst = frequency_lists[name];
   RANKED_DICTIONARIES[name] = build_ranked_dict(lst);
 }
 
 const GRAPHS: Record<string, AdjacencyGraph> = {
-  qwerty: adjacency_graphs.qwerty as AdjacencyGraph,
-  dvorak: adjacency_graphs.dvorak as AdjacencyGraph,
-  keypad: adjacency_graphs.keypad as AdjacencyGraph,
-  mac_keypad: adjacency_graphs.mac_keypad as AdjacencyGraph,
+  qwerty: adjacency_graphs.qwerty,
+  dvorak: adjacency_graphs.dvorak,
+  keypad: adjacency_graphs.keypad,
+  mac_keypad: adjacency_graphs.mac_keypad,
 };
 
 const L33T_TABLE: Record<string, string[]> = {
@@ -135,7 +135,7 @@ const matching = {
   dictionary_match(
     password: string,
     _ranked_dictionaries?: RankedDictionaries | null
-  ): Match[] {
+  ): DictionaryMatch[] {
     if (_ranked_dictionaries == null) {
       _ranked_dictionaries = RANKED_DICTIONARIES;
     }
@@ -182,8 +182,7 @@ const matching = {
       reversed_password,
       _ranked_dictionaries
     );
-    for (const match of matches) {
-      const d = match as DictionaryMatch;
+    for (const d of matches) {
       d.token = d.token.split('').reverse().join('');
       d.reversed = true;
       [d.i, d.j] = [
@@ -235,7 +234,7 @@ const matching = {
       const deduped: [string, string][][] = [];
       const members: Record<string, boolean> = {};
       for (const sub of subList) {
-        const assoc = sub.map((pair, idx) => [pair, idx] as [[string, string], number]);
+        const assoc = sub.map((pair, idx): [[string, string], number] => [pair, idx]);
         assoc.sort();
         const label = assoc.map(([k, v]) => `${String(k)},${v}`).join('-');
         if (!(label in members)) {
@@ -309,11 +308,10 @@ const matching = {
         break;
       }
       const subbed_password = this.translate(password, sub);
-      for (const match of this.dictionary_match(
+      for (const d of this.dictionary_match(
         subbed_password,
         _ranked_dictionaries
       )) {
-        const d = match as DictionaryMatch;
         const token = password.slice(d.i, d.j + 1);
         if (token.toLowerCase() === d.matched_word) {
           continue;
@@ -580,8 +578,7 @@ const matching = {
         if (!maybe_date_no_separator.exec(token)) {
           continue;
         }
-        const tokenLen = token.length as 4 | 5 | 6 | 7 | 8;
-        const splits = DATE_SPLITS[tokenLen];
+        const splits = DATE_SPLITS[token.length];
         if (!splits) continue;
         const candidates: Dmy[] = [];
         for (const [k, l] of splits) {
