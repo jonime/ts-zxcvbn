@@ -48,34 +48,31 @@ const time_estimates = {
     const month = day * 31;
     const year = month * 12;
     const century = year * 100;
-    let [display_num, display_str] = Array.from(
-      (() => {
-        let base;
-        if (seconds < 1) {
-          return [null, 'less than a second'];
-        } else if (seconds < minute) {
-          base = Math.round(seconds);
-          return [base, `${base} second`];
-        } else if (seconds < hour) {
-          base = Math.round(seconds / minute);
-          return [base, `${base} minute`];
-        } else if (seconds < day) {
-          base = Math.round(seconds / hour);
-          return [base, `${base} hour`];
-        } else if (seconds < month) {
-          base = Math.round(seconds / day);
-          return [base, `${base} day`];
-        } else if (seconds < year) {
-          base = Math.round(seconds / month);
-          return [base, `${base} month`];
-        } else if (seconds < century) {
-          base = Math.round(seconds / year);
-          return [base, `${base} year`];
-        } else {
-          return [null, 'centuries'];
-        }
-      })()
-    );
+    let display_num: number | null;
+    let display_str: string;
+    if (seconds < 1) {
+      [display_num, display_str] = [null, 'less than a second'];
+    } else if (seconds < minute) {
+      display_num = Math.round(seconds);
+      display_str = `${display_num} second`;
+    } else if (seconds < hour) {
+      display_num = Math.round(seconds / minute);
+      display_str = `${display_num} minute`;
+    } else if (seconds < day) {
+      display_num = Math.round(seconds / hour);
+      display_str = `${display_num} hour`;
+    } else if (seconds < month) {
+      display_num = Math.round(seconds / day);
+      display_str = `${display_num} day`;
+    } else if (seconds < year) {
+      display_num = Math.round(seconds / month);
+      display_str = `${display_num} month`;
+    } else if (seconds < century) {
+      display_num = Math.round(seconds / year);
+      display_str = `${display_num} year`;
+    } else {
+      [display_num, display_str] = [null, 'centuries'];
+    }
     if (display_num != null && display_num !== 1) {
       display_str += 's';
     }
