@@ -1,9 +1,9 @@
 import zxcvbn from './main';
-import { Warning } from './types';
+import { Result, Warning } from './types';
 
 describe('zxcvbn', () => {
   describe('with "password"', () => {
-    let result;
+    let result: Result;
 
     beforeEach(() => {
       result = zxcvbn('Password');
@@ -15,7 +15,7 @@ describe('zxcvbn', () => {
   });
 
   describe('with "TDvNM%YK7a46@47p"', () => {
-    let result;
+    let result: Result;
 
     beforeEach(() => {
       result = zxcvbn('TDvNM%YK7a46@47p');
@@ -35,7 +35,7 @@ describe('zxcvbn', () => {
   });
 
   describe('with "Salasana11', () => {
-    let result;
+    let result: Result;
 
     beforeEach(() => {
       result = zxcvbn('Salasana11');
@@ -51,7 +51,7 @@ describe('zxcvbn', () => {
   });
 
   describe('with "Joni"', () => {
-    let result;
+    let result: Result;
 
     beforeEach(() => {
       result = zxcvbn('Joni');
