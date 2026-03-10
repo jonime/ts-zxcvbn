@@ -12,13 +12,24 @@
       "types": "./dist/main.d.ts",
       "import": "./dist/main.mjs",
       "require": "./dist/main.js"
+    },
+    "./names/finnish": {
+      "types": "./dist/names/finnish.d.ts",
+      "import": "./dist/names/finnish.mjs",
+      "require": "./dist/names/finnish.js"
+    },
+    "./names/english": {
+      "types": "./dist/names/english.d.ts",
+      "import": "./dist/names/english.mjs",
+      "require": "./dist/names/english.js"
     }
   },
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
     "test": "vitest run",
-    "test:packaging": "npm run build && cd tests/packaging && npm install && npm test",
-    "build": "tsup",
+    "test:packaging": "npm run build && node tests/packaging/check-bundle-size.mjs && cd tests/packaging && npm install && npm test",
+    "build": "npm run build-name-lists && tsup",
+    "build-name-lists": "tsx data-scripts/build_name_lists.ts",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
     "build-frequency-lists": "tsx data-scripts/build_frequency_lists.ts data src/frequency_lists.ts",

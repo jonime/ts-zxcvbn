@@ -6,3 +6,6 @@ lib-esm
 
 tests/packaging/node_modules/
 tests/packaging/package-lock.json
+
+# generated from data/fi/names.txt and data/en/names.txt
+src/names/

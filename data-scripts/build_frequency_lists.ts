@@ -24,9 +24,9 @@ passed data dir, or vice-versa.
 }
 
 // maps dict name to num words. null means "include all words"
+// names are built separately via build_name_lists.ts and shipped as optional entry points
 const DICTIONARIES: Record<string, number | null> = {
   passwords: 30000,
-  names: null,
 };
 
 type FreqLists = Record<string, Record<string, number>>;

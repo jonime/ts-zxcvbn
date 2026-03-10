@@ -3,6 +3,14 @@ export interface Result extends MatchingResult {
   score: number;
 }
 
+/** Options for zxcvbn: optional name list and/or user inputs to match against. */
+export interface ZxcvbnOptions {
+  /** Extra strings to match (e.g. username, email). Matches are marked as user_inputs. */
+  user_inputs?: string[];
+  /** Name list to match against. When provided, matches are marked as names and trigger the Name warning. */
+  names?: string[];
+}
+
 export interface MatchingResult {
   password: string;
   guesses: number;
@@ -21,7 +29,7 @@ interface BaseMatch {
 
 export interface DictionaryMatch extends BaseMatch {
   pattern: 'dictionary';
-  dictionary_name: 'passwords' | 'names';
+  dictionary_name: 'passwords' | 'names' | 'user_inputs';
   rank: number;
   l33t: boolean;
   reversed: boolean;
