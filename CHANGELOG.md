@@ -1,3 +1,10 @@
+## [5.1.1](https://github.com/jonime/ts-zxcvbn/compare/v5.1.0...v5.1.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* Fix the broken ESM bundling ([1675b8e](https://github.com/jonime/ts-zxcvbn/commit/1675b8e4c0c28fa5363d53cf9819b1525cb017cf))
+
 # [5.1.0](https://github.com/jonime/ts-zxcvbn/compare/v5.0.2...v5.1.0) (2026-03-09)
 
 
