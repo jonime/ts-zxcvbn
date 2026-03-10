@@ -26,8 +26,8 @@
     "build": "tsup",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
-    "build-frequency-lists": "python data-scripts/build_frequency_lists.py data src/frequency_lists.ts",
-    "build-keyboard-adjacency-graphs": "python data-scripts/build_keyboard_adjacency_graphs.py src/adjacency_graphs.ts",
+    "build-frequency-lists": "tsx data-scripts/build_frequency_lists.ts data src/frequency_lists.ts",
+    "build-keyboard-adjacency-graphs": "tsx data-scripts/build_keyboard_adjacency_graphs.ts src/adjacency_graphs.ts",
     "release": "semantic-release"
   },
   "devDependencies": {
@@ -44,9 +44,11 @@
     "babel-jest": "30.3.0",
     "conventional-changelog-conventionalcommits": "9.3.0",
     "jest": "30.3.0",
+    "prettier": "3.8.1",
     "rimraf": "6.1.3",
     "semantic-release": "25.0.3",
     "tsup": "8.5.1",
+    "tsx": "4.19.2",
     "typescript": "5.9.3"
   },
   "keywords": [
