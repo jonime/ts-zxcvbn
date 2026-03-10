@@ -1,3 +1,15 @@
+# [6.0.0](https://github.com/jonime/ts-zxcvbn/compare/v5.2.1...v6.0.0) (2026-03-10)
+
+
+### Features
+
+* Improve packaging ([2116eb1](https://github.com/jonime/ts-zxcvbn/commit/2116eb1dd19ff46ab220f3c7a4268ce88ce9e776))
+
+
+### BREAKING CHANGES
+
+* exports of name list are removed from the main entry export
+
 ## [5.2.1](https://github.com/jonime/ts-zxcvbn/compare/v5.2.0...v5.2.1) (2026-03-10)
 
 
