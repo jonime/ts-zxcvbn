@@ -1,3 +1,10 @@
+# [5.2.0](https://github.com/jonime/ts-zxcvbn/compare/v5.1.1...v5.2.0) (2026-03-10)
+
+
+### Features
+
+* add optional name lists and enhance zxcvbn functionality ([c41971a](https://github.com/jonime/ts-zxcvbn/commit/c41971a19f4750de2633618691aadadd2eb7f365))
+
 ## [5.1.1](https://github.com/jonime/ts-zxcvbn/compare/v5.1.0...v5.1.1) (2026-03-10)
 
 
