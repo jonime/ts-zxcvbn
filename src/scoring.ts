@@ -1,6 +1,14 @@
 import adjacency_graphs from './adjacency_graphs.js';
 import type { Match, MatchingResult } from './types.js';
-import type { BruteforceMatch, DictionaryMatch, RepeatMatch, SequenceMatch, RegexMatch, DateMatch, SpatialMatch } from './types.js';
+import type {
+  BruteforceMatch,
+  DictionaryMatch,
+  RepeatMatch,
+  SequenceMatch,
+  RegexMatch,
+  DateMatch,
+  SpatialMatch,
+} from './types.js';
 
 /** Adjacency graph: key -> array of adjacent key strings (or null for no neighbor). */
 type AdjacencyGraph = Record<string, (string | null)[]>;
@@ -103,8 +111,21 @@ const scoring = {
     }
     const n = password.length;
 
+    // corner: empty password (avoids unwind(0) which would use optimal.g[-1])
+    if (n === 0) {
+      return {
+        password: '',
+        guesses: 1,
+        guesses_log10: 0,
+        sequence: [],
+      };
+    }
+
     // partition matches into sublists according to ending index j
-    const matches_by_j: Match[][] = Array.from({ length: n }, (): Match[] => []);
+    const matches_by_j: Match[][] = Array.from(
+      { length: n },
+      (): Match[] => []
+    );
     for (const m of Array.from(matches)) {
       matches_by_j[m.j].push(m);
     }
@@ -281,10 +302,7 @@ const scoring = {
           ? MIN_SUBMATCH_GUESSES_SINGLE_CHAR
           : MIN_SUBMATCH_GUESSES_MULTI_CHAR;
     }
-    const estimation_functions: Record<
-      string,
-      (match: Match) => number
-    > = {
+    const estimation_functions: Record<string, (match: Match) => number> = {
       bruteforce: this.bruteforce_guesses.bind(this),
       dictionary: this.dictionary_guesses.bind(this),
       spatial: this.spatial_guesses.bind(this),

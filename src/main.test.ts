@@ -2,6 +2,15 @@ import zxcvbn from './main';
 import { Warning } from './types';
 
 describe('zxcvbn', () => {
+  it('should handle empty password without crashing', () => {
+    const result = zxcvbn('');
+    expect(result.password).toBe('');
+    expect(result.guesses).toBe(1);
+    expect(result.score).toBe(0);
+    expect(result.sequence).toEqual([]);
+    expect(result.feedback).toBeDefined();
+  });
+
   it('should have really low score for "password"', () => {
     const result = zxcvbn('password');
     expect(result.score).toBe(0);
