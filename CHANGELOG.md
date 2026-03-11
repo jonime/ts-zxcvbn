@@ -1,3 +1,10 @@
+## [6.1.1](https://github.com/jonime/ts-zxcvbn/compare/v6.1.0...v6.1.1) (2026-03-11)
+
+
+### Bug Fixes
+
+* Fix crash which is caused by empty password ([b4457a7](https://github.com/jonime/ts-zxcvbn/commit/b4457a7364beca26c41b9b8a466ddb2b0dcb4898))
+
 # [6.1.0](https://github.com/jonime/ts-zxcvbn/compare/v6.0.0...v6.1.0) (2026-03-10)
 
 
