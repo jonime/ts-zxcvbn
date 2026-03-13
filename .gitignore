@@ -9,3 +9,5 @@ tests/packaging/package-lock.json
 
 # generated from data/fi/names.txt and data/en/names.txt
 src/names/
+# generated from data/passwords.txt by build_frequency_lists.ts
+src/frequencies/
