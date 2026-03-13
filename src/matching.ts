@@ -1,4 +1,3 @@
-import frequency_lists from './frequency_lists.js';
 import adjacency_graphs from './adjacency_graphs.js';
 import scoring from './scoring.js';
 import type {
@@ -26,11 +25,7 @@ function build_ranked_dict(ordered_list: readonly string[]): Record<string, numb
   return result;
 }
 
-const RANKED_DICTIONARIES: RankedDictionaries = {};
-for (const name of Object.keys(frequency_lists)) {
-  const lst = frequency_lists[name];
-  RANKED_DICTIONARIES[name] = build_ranked_dict(lst);
-}
+let RANKED_DICTIONARIES: RankedDictionaries = {};
 
 const GRAPHS: Record<string, AdjacencyGraph> = {
   qwerty: adjacency_graphs.qwerty,
@@ -193,16 +188,8 @@ const matching = {
     return this.sorted(matches);
   },
 
-  set_user_input_dictionary(ordered_list: string[]): Record<string, number> {
-    return (RANKED_DICTIONARIES['user_inputs'] = build_ranked_dict(
-      ordered_list.slice()
-    ));
-  },
-
-  set_names_dictionary(ordered_list: string[] | null | undefined): Record<string, number> {
-    const list =
-      ordered_list && ordered_list.length ? ordered_list.slice() : [];
-    return (RANKED_DICTIONARIES['names'] = build_ranked_dict(list));
+  set_ranked_dictionaries(d: RankedDictionaries): void {
+    RANKED_DICTIONARIES = d;
   },
 
   relevant_l33t_subtable(

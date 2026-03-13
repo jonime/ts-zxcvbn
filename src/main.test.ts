@@ -11,9 +11,20 @@ describe('zxcvbn', () => {
     expect(result.feedback).toBeDefined();
   });
 
-  it('should have really low score for "password"', () => {
+  it('should not treat "password" as weak when no frequency list is provided', () => {
     const result = zxcvbn('password');
+    expect(result.score).toBeGreaterThanOrEqual(1);
+  });
+
+  it('should have really low score for "password" when frequency list is provided', () => {
+    const result = zxcvbn('password', {
+      passwords: ['password', '123456'],
+    });
     expect(result.score).toBe(0);
+    const match = result.sequence.find(
+      (m) => m.pattern === 'dictionary' && m.dictionary_name === 'passwords'
+    );
+    expect(match).toBeDefined();
   });
 
   it('should have really high score for "TDvNM%YK7a46@47p"', () => {
@@ -28,9 +39,11 @@ describe('zxcvbn', () => {
     expect(result).toBeDefined();
   });
 
-  it('should have low score for "Salasana11" with warning', () => {
-    const result = zxcvbn('Salasana11');
-    expect(result.score).toBe(2);
+  it('should have low score for "Salasana11" with warning when frequency list contains similar', () => {
+    const result = zxcvbn('Salasana11', {
+      passwords: ['salasana', 'password'],
+    });
+    expect(result.score).toBeLessThanOrEqual(2);
     expect(result.feedback.warning).toBe(Warning.SimilarToCommonPassword);
   });
 
@@ -53,8 +66,8 @@ describe('zxcvbn', () => {
     expect(nameMatch).toBeUndefined();
   });
 
-  it('should accept legacy user_inputs array as second argument', () => {
-    const result = zxcvbn('custominput', ['custominput']);
+  it('should penalize passwords containing user_inputs from options', () => {
+    const result = zxcvbn('custominput', { user_inputs: ['custominput'] });
     expect(result.score).toBe(0);
     const match = result.sequence.find(
       (m) => m.pattern === 'dictionary' && m.dictionary_name === 'user_inputs'

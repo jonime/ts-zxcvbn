@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import zxcvbn from 'ts-zxcvbn';
 
 const password = ref('Tr0ub4dour&3');
 const inputs = ref('');
+
+const passwordListKind = ref<'none' | 'lite' | 'full'>('none');
+const nameListKind = ref<'none' | 'english' | 'finnish'>('none');
+const passwordsList = ref<string[]>([]);
+const namesList = ref<string[]>([]);
 
 const userInputs = computed(() =>
   inputs.value
@@ -12,9 +17,53 @@ const userInputs = computed(() =>
     .filter(Boolean)
 );
 
-const result = computed(() =>
-  zxcvbn(password.value, { user_inputs: userInputs.value })
+async function loadPasswordsList(kind: 'none' | 'lite' | 'full') {
+  if (kind === 'none') {
+    passwordsList.value = [];
+    return;
+  }
+  const mod =
+    kind === 'lite'
+      ? await import('ts-zxcvbn/frequencies/passwords-lite')
+      : await import('ts-zxcvbn/frequencies/passwords');
+  passwordsList.value = mod.default;
+}
+
+async function loadNamesList(kind: 'none' | 'english' | 'finnish') {
+  if (kind === 'none') {
+    namesList.value = [];
+    return;
+  }
+  const mod =
+    kind === 'english'
+      ? await import('ts-zxcvbn/names/english')
+      : await import('ts-zxcvbn/names/finnish');
+  namesList.value = mod.default;
+}
+
+watch(
+  passwordListKind,
+  (kind) => {
+    loadPasswordsList(kind);
+  },
+  { immediate: true }
 );
+watch(
+  nameListKind,
+  (kind) => {
+    loadNamesList(kind);
+  },
+  { immediate: true }
+);
+
+const result = computed(() => {
+  const options: { user_inputs: string[]; passwords?: string[]; names?: string[] } = {
+    user_inputs: userInputs.value,
+  };
+  if (passwordsList.value.length) options.passwords = passwordsList.value;
+  if (namesList.value.length) options.names = namesList.value;
+  return zxcvbn(password.value, options);
+});
 
 const scoreLabel = computed(() => {
   const labels = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
@@ -43,6 +92,24 @@ const scoreLabel = computed(() => {
         spellcheck="false"
         placeholder="name, email, company"
       />
+    </label>
+
+    <label>
+      Common passwords list
+      <select v-model="passwordListKind">
+        <option value="none">None</option>
+        <option value="lite">Top 5k (lite)</option>
+        <option value="full">Full (~30k)</option>
+      </select>
+    </label>
+
+    <label>
+      Name list
+      <select v-model="nameListKind">
+        <option value="none">None</option>
+        <option value="english">English</option>
+        <option value="finnish">Finnish</option>
+      </select>
     </label>
 
     <div class="stats">
@@ -77,7 +144,8 @@ label {
   margin-bottom: 12px;
 }
 
-input {
+input,
+select {
   width: 100%;
   margin-top: 6px;
   border: 1px solid var(--vp-c-divider);

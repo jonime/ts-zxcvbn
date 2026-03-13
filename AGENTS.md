@@ -13,7 +13,7 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 ### 2. Keep docs in sync
 
 - **VitePress docs** live in `docs/`. Update them when behavior or API changes.
-  - `docs/index.md` — overview, installation, quick start, optional name lists.
+  - `docs/index.md` — overview, installation, quick start, optional frequency and name lists.
   - `docs/api.md` — API reference (parameters, return value, example).
   - `docs/demo.md` — demo page; update if the demo’s behavior or data changes.
 - After edits, `docs:dev` / `docs:build` / `docs:preview` are available for local checks.
@@ -32,7 +32,7 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
   - `feat!:` or `BREAKING CHANGE:` in footer → major
 - **CHANGELOG:** Do not edit `CHANGELOG.md` by hand; semantic-release updates it on release.
 - **Formatting:** The project uses Prettier (see `.prettierrc`); keep formatting consistent.
-- **Bundle size:** The packaging test fails if the main bundle grows; avoid adding large dependencies or data to the default entry point. Optional data (e.g. name lists) use separate entry points under `./names/*`.
+- **Bundle size:** The packaging test fails if the main bundle grows; avoid adding large dependencies or data to the default entry point. Optional data (frequency lists, name lists) use separate entry points under `./frequencies/*` and `./names/*`.
 - **Publishing:** When you add files that should not be shipped to npm (e.g. tooling, dev config, docs source), update `.npmignore` so they are excluded from the published package.
 
 ## Quick reference
@@ -50,7 +50,7 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 
 - `src/` — TypeScript source and tests (`*.test.ts`).
 - `docs/` — VitePress site (index, API, demo).
-- `data/`, `data-scripts/` — raw data and scripts that generate `src/frequency_lists.ts`, `src/adjacency_graphs.ts`, and `src/names/*`. Run `npm run build-name-lists` (and other `build-*` scripts) if you change data or generation.
+- `data/`, `data-scripts/` — raw data and scripts that generate `src/frequencies/*`, `src/adjacency_graphs.ts`, and `src/names/*`. Run `npm run build-frequency-lists`, `npm run build-name-lists` (and other `build-*` scripts) if you change data or generation.
 - `tests/packaging/` — ESM/CJS consumer tests and bundle size check; run via `npm run test:packaging`.
 
 When in doubt: update README and docs for user-facing changes, add or adjust tests for behavior changes, then run `npm test` and `npm run test:packaging`.

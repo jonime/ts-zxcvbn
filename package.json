@@ -23,17 +23,27 @@
       "types": "./dist/names/english.d.ts",
       "import": "./dist/names/english.mjs",
       "require": "./dist/names/english.js"
+    },
+    "./frequencies/passwords": {
+      "types": "./dist/frequencies/passwords.d.ts",
+      "import": "./dist/frequencies/passwords.mjs",
+      "require": "./dist/frequencies/passwords.js"
+    },
+    "./frequencies/passwords-lite": {
+      "types": "./dist/frequencies/passwords-lite.d.ts",
+      "import": "./dist/frequencies/passwords-lite.mjs",
+      "require": "./dist/frequencies/passwords-lite.js"
     }
   },
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
     "test": "vitest run",
     "test:packaging": "npm run build && node tests/packaging/check-bundle-size.mjs && cd tests/packaging && npm install && npm test",
-    "build": "npm run build-name-lists && tsup",
+    "build": "npm run build-name-lists && npm run build-frequency-lists && tsup",
     "build-name-lists": "tsx data-scripts/build_name_lists.ts",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
-    "build-frequency-lists": "tsx data-scripts/build_frequency_lists.ts data src/frequency_lists.ts",
+    "build-frequency-lists": "tsx data-scripts/build_frequency_lists.ts data src/frequencies",
     "build-keyboard-adjacency-graphs": "tsx data-scripts/build_keyboard_adjacency_graphs.ts src/adjacency_graphs.ts",
     "release": "semantic-release",
     "docs:dev": "vitepress dev docs",

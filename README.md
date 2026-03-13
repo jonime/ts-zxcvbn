@@ -14,6 +14,8 @@ npm install ts-zxcvbn
 
 ## Quick start
 
+The default import is small and does **not** include built-in password frequency lists. Pass an optional list via `options.passwords` when you want dictionary-based scoring.
+
 ```ts
 import zxcvbn from 'ts-zxcvbn'
 
@@ -24,10 +26,25 @@ console.log(result.guesses)       // estimated guesses required
 console.log(result.feedback)      // warning + suggestions for weak passwords
 ```
 
+To match against common passwords (e.g. “password”, “123456”), import an optional frequency list and pass it in. Choose **lite** (~5k top passwords, smaller bundle) or **full** (~30k):
+
+```ts
+import zxcvbn from 'ts-zxcvbn'
+import passwords from 'ts-zxcvbn/frequencies/passwords'        // full list (~30k)
+// or
+import passwords from 'ts-zxcvbn/frequencies/passwords-lite'   // lite (~5k, smaller)
+
+const result = zxcvbn('password', {
+  passwords,
+})
+// result.score is 0, result.feedback.warning mentions common password
+```
+
 CommonJS is also supported:
 
 ```js
-const zxcvbn = require('ts-zxcvbn')
+const zxcvbn = require('ts-zxcvbn').default
+const passwords = require('ts-zxcvbn/frequencies/passwords').default
 ```
 
 ## API
@@ -35,11 +52,18 @@ const zxcvbn = require('ts-zxcvbn')
 ### `zxcvbn(password, options?)`
 
 - `password: string` — password to estimate.
-- `options?: string[] | ZxcvbnOptions` — optional. Can be:
-  - **Legacy:** an array of user-specific strings (name, email, company, etc.) to penalize if they appear in the password. Same as `{ user_inputs: [...] }`.
-  - **Options object:** `{ user_inputs?: string[]; names?: string[] }` — `user_inputs` are custom strings to match; `names` is an optional name list so that common first/last names in the password trigger the “Name” warning. By default no name list is included (keeps the main bundle small).
+- `options?: ZxcvbnOptions` — optional. `{ user_inputs?: string[]; names?: string[]; passwords?: string[] }` — `user_inputs` are custom strings to match; `names` is an optional name list for the “Name” warning; `passwords` is an optional list of common passwords (e.g. from `ts-zxcvbn/frequencies/passwords` or `ts-zxcvbn/frequencies/passwords-lite`). By default no frequency or name list is included (keeps the main bundle small).
 
-**Optional name lists** (opt-in; import from separate entry points to keep the main bundle small):
+**Optional passwords list** (for common-password and similar warnings). Use `frequencies/passwords` (full, ~30k entries) or `frequencies/passwords-lite` (top 5k, smaller bundle):
+
+```ts
+import zxcvbn from 'ts-zxcvbn'
+import passwords from 'ts-zxcvbn/frequencies/passwords'        // or passwords-lite
+
+zxcvbn('password', { passwords })
+```
+
+**Optional name lists** (for “Name” warning):
 
 ```ts
 import zxcvbn from 'ts-zxcvbn'
@@ -87,7 +111,7 @@ npm test
 npm run test:packaging   # build, bundle size check, tree-shake check, and CJS/ESM consumer tests
 ```
 
-The packaging test ensures the main bundle size does not increase (optional name lists are separate entry points).
+The packaging test ensures the main bundle stays small (optional frequency and name lists are separate entry points).
 
 **AI agents:** See [AGENTS.md](AGENTS.md) for conventions on updating README/docs, adding tests, and committing.
 

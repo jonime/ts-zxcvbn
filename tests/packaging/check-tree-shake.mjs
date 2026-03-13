@@ -14,12 +14,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outFile = path.join(__dirname, 'tree-shake-bundle.mjs');
 
 // Distinctive strings that only appear in the optional name lists (Finnish/English).
-// If tree-shaking works, a consumer that only uses default zxcvbn should not include these.
 const NAME_LIST_MARKERS = [
   'aapeli',  // Finnish name list
   'aappo',   // Finnish name list
   'kyösti',  // Finnish name list (with diacritic)
 ];
+// Words that only appear in the optional frequency list (passwords); not in main entry.
+const FREQUENCY_LIST_MARKERS = ['qwertyuiop', 'zxcvbnm'];
 
 async function run() {
   await build({
@@ -34,17 +35,25 @@ async function run() {
 
   const bundleContent = fs.readFileSync(outFile, 'utf8');
 
-  const found = NAME_LIST_MARKERS.filter((marker) => bundleContent.includes(marker));
-  if (found.length > 0) {
+  const foundNames = NAME_LIST_MARKERS.filter((m) => bundleContent.includes(m));
+  if (foundNames.length > 0) {
     console.error(
       'Tree-shake check failed: bundle that only uses default zxcvbn should not include name list data.'
     );
-    console.error('Found name-list markers in bundle:', found.join(', '));
-    console.error('This usually means the library main entry is pulling in name lists and they are not being tree-shaken.');
+    console.error('Found name-list markers in bundle:', foundNames.join(', '));
     process.exit(1);
   }
 
-  console.log('Tree-shake check passed: name lists are not included in default-only consumer bundle');
+  const foundFreq = FREQUENCY_LIST_MARKERS.filter((m) => bundleContent.includes(m));
+  if (foundFreq.length > 0) {
+    console.error(
+      'Tree-shake check failed: bundle that only uses default zxcvbn should not include frequency list data.'
+    );
+    console.error('Found frequency-list markers in bundle:', foundFreq.join(', '));
+    process.exit(1);
+  }
+
+  console.log('Tree-shake check passed: name and frequency lists are not included in default-only consumer bundle');
   try {
     fs.unlinkSync(outFile);
   } catch {

@@ -3,12 +3,14 @@ export interface Result extends MatchingResult {
   score: number;
 }
 
-/** Options for zxcvbn: optional name list and/or user inputs to match against. */
+/** Options for zxcvbn: optional password list, name list, and/or user inputs to match against. */
 export interface ZxcvbnOptions {
   /** Extra strings to match (e.g. username, email). Matches are marked as user_inputs. */
   user_inputs?: string[];
   /** Name list to match against. When provided, matches are marked as names and trigger the Name warning. */
   names?: string[];
+  /** Optional list of common passwords (e.g. from 'ts-zxcvbn/frequencies/passwords' or 'ts-zxcvbn/frequencies/passwords-lite'). Omit for a smaller bundle with no built-in dictionary. */
+  passwords?: string[];
 }
 
 export interface MatchingResult {

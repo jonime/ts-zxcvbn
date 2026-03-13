@@ -10,6 +10,8 @@ npm install ts-zxcvbn
 
 ## Quick start
 
+The default import does not include built-in password frequency data. Use it as-is for pattern-based scoring, or add optional lists via options.
+
 ```ts
 import zxcvbn from 'ts-zxcvbn'
 
@@ -20,9 +22,22 @@ console.log(result.guesses)
 console.log(result.feedback)
 ```
 
+## Optional frequency list
+
+To detect common passwords (e.g. “password”, “123456”) and show the “Common password” warning, import a passwords list and pass it in. Use **full** (~30k) or **lite** (top 5k, smaller bundle):
+
+```ts
+import zxcvbn from 'ts-zxcvbn'
+import passwords from 'ts-zxcvbn/frequencies/passwords'        // full
+// or
+import passwords from 'ts-zxcvbn/frequencies/passwords-lite'   // lite (~5k)
+
+zxcvbn('password', { passwords })
+```
+
 ## Optional name lists
 
-Name lists are in separate entry points so the main bundle stays small. Import only the list you need:
+Name lists are in separate entry points. Import only the list you need:
 
 ```ts
 import zxcvbn from 'ts-zxcvbn'
