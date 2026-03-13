@@ -48,7 +48,9 @@
     "release": "semantic-release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "benchmark": "cd benchmark && npm install && npm run benchmark",
+    "benchmark:update-docs": "cd benchmark && npm install && node run.mjs --out=../docs/benchmark-results.json"
   },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",

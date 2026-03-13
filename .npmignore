@@ -12,6 +12,7 @@
 /docs
 /src
 /tests
+/benchmark
 /tsconfig.json
 /tsup.config.ts
 /vitest.config.ts
