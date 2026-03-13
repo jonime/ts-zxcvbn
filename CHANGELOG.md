@@ -1,3 +1,17 @@
+# [7.0.0](https://github.com/jonime/ts-zxcvbn/compare/v6.1.1...v7.0.0) (2026-03-13)
+
+
+* feat!: optional password lists and options-only API ([29f03b0](https://github.com/jonime/ts-zxcvbn/commit/29f03b0bda9a0d2c69884737543464c01f0ef198))
+
+
+### BREAKING CHANGES
+
+* The second argument must be an options object. Passing
+an array of strings (legacy user_inputs) is no longer supported. The
+default bundle no longer includes built-in password frequency lists;
+pass options.passwords from ts-zxcvbn/frequencies/passwords or
+ts-zxcvbn/frequencies/passwords-lite for common-password matching.
+
 ## [6.1.1](https://github.com/jonime/ts-zxcvbn/compare/v6.1.0...v6.1.1) (2026-03-11)
 
 
