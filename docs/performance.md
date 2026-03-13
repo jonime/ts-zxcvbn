@@ -1,6 +1,6 @@
 # Performance
 
-Performance depends on your environment and the password set. This page compares **ts-zxcvbn** to other zxcvbn implementations on the same workload.
+This page compares **ts-zxcvbn** to Dropbox’s original **zxcvbn** and other implementations on the same workload. The chart shows ops/sec and a **vs zxcvbn** multiplier so you can see how much faster ts-zxcvbn is. Results depend on your environment and the password set.
 
 <ClientOnly>
   <PerformanceChart />
@@ -11,6 +11,8 @@ import PerformanceChart from './.vitepress/components/PerformanceChart.vue'
 </script>
 
 ## Compared packages
+
+The chart uses **zxcvbn** (Dropbox’s original) as the baseline (1×):
 
 - **[zxcvbn](https://www.npmjs.com/package/zxcvbn)** — Dropbox’s original JavaScript implementation
 - **[zxcvbn-typescript](https://www.npmjs.com/package/zxcvbn-typescript)** — TypeScript port, standalone

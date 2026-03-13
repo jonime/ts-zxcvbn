@@ -13,7 +13,7 @@ function sanitize_string_list(list: unknown[]): string[] {
 function build_ranked_dict(ordered_list: readonly string[]): Record<string, number> {
   const result: Record<string, number> = {};
   let i = 1;
-  for (const word of Array.from(ordered_list)) {
+  for (const word of ordered_list) {
     result[word] = i;
     i += 1;
   }
@@ -21,27 +21,32 @@ function build_ranked_dict(ordered_list: readonly string[]): Record<string, numb
 }
 
 const zxcvbn = function (password: string, options?: ZxcvbnOptions | null): Result {
+  const normalizedOptions =
+    options && typeof options === 'object' ? options : undefined;
+
   const user_inputs: string[] =
-    options && typeof options === 'object'
-      ? sanitize_string_list(options.user_inputs ?? [])
+    normalizedOptions != null
+      ? sanitize_string_list(normalizedOptions.user_inputs ?? [])
       : [];
 
   const names: string[] =
-    options && typeof options === 'object'
-      ? sanitize_string_list(options.names ?? [])
-      : [];
+    normalizedOptions != null ? sanitize_string_list(normalizedOptions.names ?? []) : [];
 
   const passwords_list: string[] =
-    options && typeof options === 'object' && Array.isArray(options.passwords)
-      ? sanitize_string_list(options.passwords)
+    normalizedOptions != null && Array.isArray(normalizedOptions.passwords)
+      ? sanitize_string_list(normalizedOptions.passwords)
       : [];
 
   const ranked_dictionaries: Record<string, Record<string, number>> = {};
   if (passwords_list.length > 0) {
     ranked_dictionaries['passwords'] = build_ranked_dict(passwords_list);
   }
-  ranked_dictionaries['user_inputs'] = build_ranked_dict(user_inputs);
-  ranked_dictionaries['names'] = build_ranked_dict(names);
+  if (user_inputs.length > 0) {
+    ranked_dictionaries['user_inputs'] = build_ranked_dict(user_inputs);
+  }
+  if (names.length > 0) {
+    ranked_dictionaries['names'] = build_ranked_dict(names);
+  }
 
   matching.set_ranked_dictionaries(ranked_dictionaries);
 

@@ -17,11 +17,19 @@ type AdjacencyGraph = Record<string, (string | null)[]>;
 // this calculates the average over all keys.
 function calc_average_degree(graph: AdjacencyGraph): number {
   let average = 0;
-  for (const key of Object.keys(graph)) {
+  let keyCount = 0;
+  for (const key in graph) {
+    keyCount += 1;
     const neighbors = graph[key];
-    average += Array.from(neighbors).filter((n) => n).length;
+    let neighborCount = 0;
+    for (const neighbor of neighbors) {
+      if (neighbor) {
+        neighborCount += 1;
+      }
+    }
+    average += neighborCount;
   }
-  average /= Object.keys(graph).length;
+  average /= keyCount;
   return average;
 }
 
@@ -49,10 +57,10 @@ const scoring = {
   },
 
   log10(n: number): number {
-    return Math.log(n) / Math.log(10);
+    return Math.log(n) * Math.LOG10E;
   }, // IE doesn't support Math.log10 :(
   log2(n: number): number {
-    return Math.log(n) / Math.log(2);
+    return Math.log(n) * Math.LOG2E;
   },
 
   factorial(n: number): number {
@@ -126,11 +134,11 @@ const scoring = {
       { length: n },
       (): Match[] => []
     );
-    for (const m of Array.from(matches)) {
+    for (const m of matches) {
       matches_by_j[m.j].push(m);
     }
     // small detail: for deterministic output, sort each sublist by i.
-    for (const lst of Array.from(matches_by_j)) {
+    for (const lst of matches_by_j) {
       lst.sort((m1, m2) => m1.i - m2.i);
     }
 
@@ -186,7 +194,8 @@ const scoring = {
       // update state if new best.
       // first see if any competing sequences covering this prefix, with l or fewer matches,
       // fare better than this sequence. if so, skip it and return.
-      for (const competing_l of Object.keys(optimal.g[k]).map(Number)) {
+      for (const competingKey in optimal.g[k]) {
+        const competing_l = Number(competingKey);
         const competing_g = optimal.g[k][competing_l];
         if (competing_l > l) {
           continue;
@@ -212,9 +221,9 @@ const scoring = {
         // leads to new bests.
         m = make_bruteforce_match(i, k);
         const object = optimal.m[i - 1];
-        for (const l of Object.keys(object).map(Number)) {
+        for (const key in object) {
+          const l = Number(key);
           const last_m = object[l];
-          const l_val = parseInt(String(l), 10);
           // corner: an optimal sequence will never have two adjacent bruteforce matches.
           // it is strictly better to have a single bruteforce match spanning the same region:
           // same contribution to the guess product with a lower length.
@@ -223,7 +232,7 @@ const scoring = {
             continue;
           }
           // try adding m to this length-l sequence.
-          update(m, l_val + 1);
+          update(m, l + 1);
         }
       }
     };
@@ -236,7 +245,8 @@ const scoring = {
       // find the final best sequence length and score
       let l: number | undefined;
       let g = Infinity;
-      for (const candidate_l of Object.keys(optimal.g[k]).map(Number)) {
+      for (const candidateKey in optimal.g[k]) {
+        const candidate_l = Number(candidateKey);
         const candidate_g = optimal.g[k][candidate_l];
         if (candidate_g < g) {
           l = candidate_l;
@@ -255,11 +265,11 @@ const scoring = {
 
     let guesses: number;
     for (k = 0; k < n; k++) {
-      for (const m of Array.from(matches_by_j[k])) {
+      for (const m of matches_by_j[k]) {
         if (m.i > 0) {
-          for (const l of Object.keys(optimal.m[m.i - 1]).map(Number)) {
-            const l_val = parseInt(String(l), 10);
-            update(m, l_val + 1);
+          for (const key in optimal.m[m.i - 1]) {
+            const l = Number(key);
+            update(m, l + 1);
           }
         } else {
           update(m, 1);
@@ -302,16 +312,33 @@ const scoring = {
           ? MIN_SUBMATCH_GUESSES_SINGLE_CHAR
           : MIN_SUBMATCH_GUESSES_MULTI_CHAR;
     }
-    const estimation_functions: Record<string, (match: Match) => number> = {
-      bruteforce: this.bruteforce_guesses.bind(this),
-      dictionary: this.dictionary_guesses.bind(this),
-      spatial: this.spatial_guesses.bind(this),
-      repeat: this.repeat_guesses.bind(this),
-      sequence: this.sequence_guesses.bind(this),
-      regex: this.regex_guesses.bind(this),
-      date: this.date_guesses.bind(this),
-    };
-    const guesses = estimation_functions[match.pattern](match);
+    let guesses: number;
+    switch (match.pattern) {
+      case 'bruteforce':
+        guesses = this.bruteforce_guesses(match);
+        break;
+      case 'dictionary':
+        guesses = this.dictionary_guesses(match);
+        break;
+      case 'spatial':
+        guesses = this.spatial_guesses(match);
+        break;
+      case 'repeat':
+        guesses = this.repeat_guesses(match);
+        break;
+      case 'sequence':
+        guesses = this.sequence_guesses(match);
+        break;
+      case 'regex':
+        guesses = this.regex_guesses(match);
+        break;
+      case 'date':
+        guesses = this.date_guesses(match);
+        break;
+      default:
+        guesses = 0;
+        break;
+    }
     match.guesses = Math.max(guesses, min_guesses);
     match.guesses_log10 = this.log10(match.guesses);
     return match.guesses;
@@ -339,10 +366,19 @@ const scoring = {
     let base_guesses: number;
     const first_chr = match.token.charAt(0);
     // lower guesses for obvious starting points
-    if (['a', 'A', 'z', 'Z', '0', '1', '9'].includes(first_chr)) {
+    if (
+      first_chr === 'a' ||
+      first_chr === 'A' ||
+      first_chr === 'z' ||
+      first_chr === 'Z' ||
+      first_chr === '0' ||
+      first_chr === '1' ||
+      first_chr === '9'
+    ) {
       base_guesses = 4;
     } else {
-      if (first_chr.match(/\d/)) {
+      const charCode = first_chr.charCodeAt(0);
+      if (charCode >= 48 && charCode <= 57) {
         base_guesses = 10; // digits
       } else {
         // could give a higher base for uppercase,
@@ -467,22 +503,30 @@ const scoring = {
 
   uppercase_variations(match: DictionaryMatch): number {
     const word = match.token;
-    if (word.match(this.ALL_LOWER) || word.toLowerCase() === word) {
+    if (this.ALL_LOWER.test(word) || word.toLowerCase() === word) {
       return 1;
     }
     // a capitalized word is the most common capitalization scheme,
     // so it only doubles the search space (uncapitalized + capitalized).
     // allcaps and end-capitalized are common enough too, underestimate as 2x factor to be safe.
     for (const regex of [this.START_UPPER, this.END_UPPER, this.ALL_UPPER]) {
-      if (word.match(regex)) {
+      if (regex.test(word)) {
         return 2;
       }
     }
     // otherwise calculate the number of ways to capitalize U+L uppercase+lowercase letters
     // with U uppercase letters or less. or, if there's more uppercase than lower (for eg. PASSwORD),
     // the number of ways to lowercase U+L letters with L lowercase letters or less.
-    const U = word.split('').filter((ch) => /[A-Z]/.test(ch)).length;
-    const L = word.split('').filter((ch) => /[a-z]/.test(ch)).length;
+    let U = 0;
+    let L = 0;
+    for (let i = 0; i < word.length; i += 1) {
+      const code = word.charCodeAt(i);
+      if (code >= 65 && code <= 90) {
+        U += 1;
+      } else if (code >= 97 && code <= 122) {
+        L += 1;
+      }
+    }
     let variations = 0;
     for (let i = 1; i <= Math.min(U, L); i++) {
       variations += this.nCk(U + L, i);
@@ -495,12 +539,20 @@ const scoring = {
       return 1;
     }
     let variations = 1;
+    const lowerToken = match.token.toLowerCase();
     for (const subbed of Object.keys(match.sub)) {
       // lower-case match.token before calculating: capitalization shouldn't affect l33t calc.
       const unsubbed = match.sub[subbed];
-      const chrs = match.token.toLowerCase().split('');
-      const S = chrs.filter((chr) => chr === subbed).length; // num of subbed chars
-      const U = chrs.filter((chr) => chr === unsubbed).length; // num of unsubbed chars
+      let S = 0;
+      let U = 0;
+      for (let i = 0; i < lowerToken.length; i += 1) {
+        const chr = lowerToken.charAt(i);
+        if (chr === subbed) {
+          S += 1;
+        } else if (chr === unsubbed) {
+          U += 1;
+        }
+      }
       if (S === 0 || U === 0) {
         // for this sub, password is either fully subbed (444) or fully unsubbed (aaa)
         // treat that as doubling the space (attacker needs to try fully subbed chars in addition to

@@ -15,17 +15,14 @@ type AdjacencyGraph = Record<string, (string | null)[]>;
 
 type RankedDictionaries = Record<string, Record<string, number>>;
 
-function build_ranked_dict(ordered_list: readonly string[]): Record<string, number> {
-  const result: Record<string, number> = {};
-  let i = 1; // rank starts at 1, not 0
-  for (const word of Array.from(ordered_list)) {
-    result[word] = i;
-    i += 1;
-  }
-  return result;
-}
-
 let RANKED_DICTIONARIES: RankedDictionaries = {};
+
+function has_dictionaries(dictionaries: RankedDictionaries): boolean {
+  for (const _key in dictionaries) {
+    return true;
+  }
+  return false;
+}
 
 const GRAPHS: Record<string, AdjacencyGraph> = {
   qwerty: adjacency_graphs.qwerty,
@@ -50,6 +47,8 @@ const L33T_TABLE: Record<string, string[]> = {
 };
 
 const REGEXEN: Record<string, RegExp> = { recent_year: /19\d\d|200\d|201\d/g };
+const MAYBE_DATE_NO_SEPARATOR = /^\d{4,8}$/;
+const MAYBE_DATE_WITH_SEPARATOR = /^(\d{1,4})([\s/\\_.-])(\d{1,2})\2(\d{1,4})$/;
 
 const DATE_MAX_YEAR = 2050;
 const DATE_MIN_YEAR = 1000;
@@ -98,9 +97,12 @@ const matching = {
     return lst.push.apply(lst, lst2);
   },
   translate(string: string, chr_map: Record<string, string>): string {
-    return Array.from(string.split(''))
-      .map((chr) => chr_map[chr] || chr)
-      .join('');
+    let translated = '';
+    for (let i = 0; i < string.length; i += 1) {
+      const chr = string.charAt(i);
+      translated += chr_map[chr] || chr;
+    }
+    return translated;
   },
   mod(n: number, m: number): number {
     return ((n % m) + m) % m;
@@ -111,19 +113,16 @@ const matching = {
 
   omnimatch(password: string): Match[] {
     const matches: Match[] = [];
-    const matchers = [
-      this.dictionary_match.bind(this),
-      this.reverse_dictionary_match.bind(this),
-      this.l33t_match.bind(this),
-      this.spatial_match.bind(this),
-      this.repeat_match.bind(this),
-      this.sequence_match.bind(this),
-      this.regex_match.bind(this),
-      this.date_match.bind(this),
-    ];
-    for (const matcher of matchers) {
-      this.extend(matches, matcher(password));
+    if (has_dictionaries(RANKED_DICTIONARIES)) {
+      this.extend(matches, this.dictionary_match(password));
+      this.extend(matches, this.reverse_dictionary_match(password));
+      this.extend(matches, this.l33t_match(password));
     }
+    this.extend(matches, this.spatial_match(password));
+    this.extend(matches, this.repeat_match(password));
+    this.extend(matches, this.sequence_match(password));
+    this.extend(matches, this.regex_match(password));
+    this.extend(matches, this.date_match(password));
     return this.sorted(matches);
   },
 
@@ -134,6 +133,9 @@ const matching = {
     if (_ranked_dictionaries == null) {
       _ranked_dictionaries = RANKED_DICTIONARIES;
     }
+    if (!has_dictionaries(_ranked_dictionaries)) {
+      return [];
+    }
     const matches: DictionaryMatch[] = [];
     const len = password.length;
     const password_lower = password.toLowerCase();
@@ -142,9 +144,9 @@ const matching = {
       for (let i = 0; i < len; i++) {
         for (let j = i; j < len; j++) {
           const sliceEnd = j + 1;
-          if (password_lower.slice(i, sliceEnd) in ranked_dict) {
-            const word = password_lower.slice(i, sliceEnd);
-            const rank = ranked_dict[word];
+          const word = password_lower.slice(i, sliceEnd);
+          const rank = ranked_dict[word];
+          if (rank !== undefined) {
             matches.push({
               pattern: 'dictionary',
               i,
@@ -172,6 +174,9 @@ const matching = {
     if (_ranked_dictionaries == null) {
       _ranked_dictionaries = RANKED_DICTIONARIES;
     }
+    if (!has_dictionaries(_ranked_dictionaries)) {
+      return [];
+    }
     const reversed_password = password.split('').reverse().join('');
     const matches = this.dictionary_match(
       reversed_password,
@@ -197,15 +202,19 @@ const matching = {
     table: Record<string, string[]>
   ): Record<string, string[]> {
     const password_chars: Record<string, boolean> = {};
-    for (const chr of Array.from(password.split(''))) {
+    for (let i = 0; i < password.length; i += 1) {
+      const chr = password.charAt(i);
       password_chars[chr] = true;
     }
     const subtable: Record<string, string[]> = {};
     for (const letter of Object.keys(table)) {
       const subs = table[letter];
-      const relevant_subs = Array.from(subs).filter(
-        (sub) => sub in password_chars
-      );
+      const relevant_subs: string[] = [];
+      for (const sub of subs) {
+        if (sub in password_chars) {
+          relevant_subs.push(sub);
+        }
+      }
       if (relevant_subs.length > 0) {
         subtable[letter] = relevant_subs;
       }
@@ -266,9 +275,9 @@ const matching = {
 
     helper(keys);
     const sub_dicts: Record<string, string>[] = [];
-    for (const sub of Array.from(subs)) {
+    for (const sub of subs) {
       const sub_dict: Record<string, string> = {};
-      for (const [l33t_chr, chr] of Array.from(sub)) {
+      for (const [l33t_chr, chr] of sub) {
         sub_dict[l33t_chr] = chr;
       }
       sub_dicts.push(sub_dict);
@@ -283,6 +292,9 @@ const matching = {
   ): Match[] {
     if (_ranked_dictionaries == null) {
       _ranked_dictionaries = RANKED_DICTIONARIES;
+    }
+    if (!has_dictionaries(_ranked_dictionaries)) {
+      return [];
     }
     if (_l33t_table == null) {
       _l33t_table = L33T_TABLE;
@@ -356,7 +368,7 @@ const matching = {
       let last_direction: number | null = null;
       let turns = 0;
       if (
-        ['qwerty', 'dvorak'].includes(graph_name) &&
+        (graph_name === 'qwerty' || graph_name === 'dvorak') &&
         this.SHIFTED_RX.exec(password.charAt(i))
       ) {
         shifted_count = 1;
@@ -371,7 +383,7 @@ const matching = {
         const adjacents = graph[prev_char] || [];
         if (j < password.length) {
           const cur_char = password.charAt(j);
-          for (const adj of Array.from(adjacents)) {
+          for (const adj of adjacents) {
             cur_direction += 1;
             if (adj && adj.indexOf(cur_char) !== -1) {
               found = true;
@@ -561,10 +573,6 @@ const matching = {
 
   date_match(password: string): DateMatch[] {
     const matches: DateMatch[] = [];
-    const maybe_date_no_separator = /^\d{4,8}$/;
-    const maybe_date_with_separator = new RegExp(
-      '^(\\d{1,4})([\\s/\\\\_.-])(\\d{1,2})\\2(\\d{1,4})$'
-    );
 
     for (let i = 0; i <= password.length - 4; i++) {
       for (let j = i + 3; j <= i + 7; j++) {
@@ -572,7 +580,7 @@ const matching = {
           break;
         }
         const token = password.slice(i, j + 1);
-        if (!maybe_date_no_separator.exec(token)) {
+        if (!MAYBE_DATE_NO_SEPARATOR.exec(token)) {
           continue;
         }
         const splits = DATE_SPLITS[token.length];
@@ -623,7 +631,7 @@ const matching = {
           break;
         }
         const token = password.slice(i, j + 1);
-        const rx_match = maybe_date_with_separator.exec(token);
+        const rx_match = MAYBE_DATE_WITH_SEPARATOR.exec(token);
         if (rx_match == null) {
           continue;
         }
