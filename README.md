@@ -109,9 +109,11 @@ npm install
 npm run build
 npm test
 npm run test:packaging   # build, bundle size check, tree-shake check, and CJS/ESM consumer tests
+npm run benchmark       # compare performance to zxcvbn, zxcvbn-typescript, @zxcvbn-ts/core
+npm run benchmark:update-docs   # run benchmark and update the chart data in the docs
 ```
 
-The packaging test ensures the main bundle stays small (optional frequency and name lists are separate entry points).
+The packaging test ensures the main bundle stays small (optional frequency and name lists are separate entry points). For a performance comparison with other zxcvbn implementations, see the [Performance](https://jonime.github.io/ts-zxcvbn/performance) docs page.
 
 **AI agents:** See [AGENTS.md](AGENTS.md) for conventions on updating README/docs, adding tests, and committing.
 

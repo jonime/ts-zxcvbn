@@ -1,0 +1,17 @@
+{
+  "name": "ts-zxcvbn-benchmark",
+  "private": true,
+  "description": "Performance comparison of ts-zxcvbn vs other zxcvbn implementations",
+  "type": "module",
+  "scripts": {
+    "benchmark": "node run.mjs"
+  },
+  "dependencies": {
+    "ts-zxcvbn": "file:..",
+    "zxcvbn": "^4.4.2",
+    "zxcvbn-typescript": "^5.0.1",
+    "@zxcvbn-ts/core": "^3.0.2",
+    "@zxcvbn-ts/language-common": "^3.0.2",
+    "@zxcvbn-ts/language-en": "^3.0.2"
+  }
+}

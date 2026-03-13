@@ -16,6 +16,7 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
   - `docs/index.md` — overview, installation, quick start, optional frequency and name lists.
   - `docs/api.md` — API reference (parameters, return value, example).
   - `docs/demo.md` — demo page; update if the demo’s behavior or data changes.
+  - `docs/performance.md` — performance comparison and benchmark; update if the benchmark script or chart data changes.
 - After edits, `docs:dev` / `docs:build` / `docs:preview` are available for local checks.
 
 ### 3. Add or update tests
@@ -42,6 +43,8 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 | Unit tests        | `npm test`                                  |
 | Full check        | `npm run test:packaging`                    |
 | Build             | `npm run build`                             |
+| Benchmark         | `npm run benchmark` (from root; uses `benchmark/`) |
+| Update perf chart | `npm run benchmark:update-docs` (writes `docs/benchmark-results.json`) |
 | Docs dev server   | `npm run docs:dev`                          |
 | Test files        | `src/**/*.test.ts`                         |
 | Public API        | `src/main.ts`                               |
@@ -52,5 +55,6 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 - `docs/` — VitePress site (index, API, demo).
 - `data/`, `data-scripts/` — raw data and scripts that generate `src/frequencies/*`, `src/adjacency_graphs.ts`, and `src/names/*`. Run `npm run build-frequency-lists`, `npm run build-name-lists` (and other `build-*` scripts) if you change data or generation.
 - `tests/packaging/` — ESM/CJS consumer tests and bundle size check; run via `npm run test:packaging`.
+- `benchmark/` — performance comparison script (ts-zxcvbn vs zxcvbn, zxcvbn-typescript, @zxcvbn-ts/core); run via `npm run benchmark`.
 
 When in doubt: update README and docs for user-facing changes, add or adjust tests for behavior changes, then run `npm test` and `npm run test:packaging`.
