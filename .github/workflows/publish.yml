@@ -1,4 +1,4 @@
-name: Publish Package
+name: Publish package
 
 on:
   push:
@@ -16,7 +16,8 @@ concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  publish:
+  publish-package:
+    name: Publish package
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
