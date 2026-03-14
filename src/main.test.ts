@@ -1,5 +1,5 @@
 import zxcvbn from './main';
-import { Warning } from './types';
+import { Warning, type DictionaryMatch } from './types';
 
 describe('zxcvbn', () => {
   it('should handle empty password without crashing', () => {
@@ -135,7 +135,8 @@ describe('zxcvbn', () => {
         const result = zxcvbn('weak', options);
         expect(result.score).toBe(0);
         const match = result.sequence.find(
-          (m) => m.pattern === 'dictionary' && m.dictionary_name === 'passwords'
+          (m): m is DictionaryMatch =>
+            m.pattern === 'dictionary' && m.dictionary_name === 'passwords'
         );
         expect(match).toBeDefined();
         expect(match?.matched_word).toBe('weak');
@@ -145,7 +146,8 @@ describe('zxcvbn', () => {
         const result = zxcvbn('alice', options);
         expect(result.feedback.warning).toBe(Warning.Name);
         const match = result.sequence.find(
-          (m) => m.pattern === 'dictionary' && m.dictionary_name === 'names'
+          (m): m is DictionaryMatch =>
+            m.pattern === 'dictionary' && m.dictionary_name === 'names'
         );
         expect(match).toBeDefined();
         expect(match?.matched_word).toBe('alice');

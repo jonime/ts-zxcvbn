@@ -37,6 +37,7 @@
   },
   "repository": "jonime/ts-zxcvbn",
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:packaging": "npm run build && node tests/packaging/check-bundle-size.mjs && cd tests/packaging && npm install && npm test",
     "build": "npm run build-name-lists && npm run build-frequency-lists && tsup",

@@ -25,7 +25,11 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 - **Coverage:** New or changed behavior should have tests so regressions are caught.
 - **Run:** `npm test`. Before pushing, also run `npm run test:packaging` (build + bundle size + ESM/CJS consumer tests).
 
-### 4. Other conventions
+### 4. Check types
+
+- **Type checking:** Run `npm run typecheck` to ensure TypeScript compiles without errors. Do this when changing types or adding code that uses match/result types.
+
+### 5. Other conventions
 
 - **Commits:** Use [Conventional Commits](https://www.conventionalcommits.org/) so [semantic-release](https://semantic-release.gitbook.io/) can version and publish correctly:
   - `fix:` → patch
@@ -40,6 +44,7 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 
 | Task              | Command / location                          |
 |-------------------|---------------------------------------------|
+| Type check        | `npm run typecheck`                         |
 | Unit tests        | `npm test`                                  |
 | Full check        | `npm run test:packaging`                    |
 | Build             | `npm run build`                             |
@@ -57,4 +62,4 @@ This file helps agents work effectively on **ts-zxcvbn**. Follow it when impleme
 - `tests/packaging/` — ESM/CJS consumer tests and bundle size check; run via `npm run test:packaging`.
 - `benchmark/` — performance comparison script (ts-zxcvbn vs zxcvbn, zxcvbn-typescript, @zxcvbn-ts/core); run via `npm run benchmark`.
 
-When in doubt: update README and docs for user-facing changes, add or adjust tests for behavior changes, then run `npm test` and `npm run test:packaging`.
+When in doubt: update README and docs for user-facing changes, add or adjust tests for behavior changes, then run `npm run typecheck`, `npm test`, and `npm run test:packaging`.

@@ -107,6 +107,7 @@ It keeps the same core approach while offering modern npm packaging (ESM + CJS +
 ```bash
 npm install
 npm run build
+npm run typecheck   # TypeScript check (no emit)
 npm test
 npm run test:packaging   # build, bundle size check, tree-shake check, and CJS/ESM consumer tests
 npm run benchmark       # compare performance to zxcvbn, zxcvbn-typescript, @zxcvbn-ts/core
