@@ -12,7 +12,9 @@ import { performance } from 'node:perf_hooks';
 
 const require = createRequire(import.meta.url);
 
-const outPath = process.argv.find((a) => a.startsWith('--out='))?.slice('--out='.length);
+const outPath = process.argv
+  .find((a) => a.startsWith('--out='))
+  ?.slice('--out='.length);
 
 // Varied password set: short, long, dictionary-like, numbers, symbols, etc.
 const PASSWORDS = [
@@ -113,7 +115,8 @@ const PASSWORDS = [
   'correct horse battery staple',
 ];
 
-const ITERATIONS = 200;
+const MAX_ITERATIONS = 200;
+const TARGET_MS = 5000; // aim for ~5s per implementation so slow ones don't run too long
 const WARMUP_ROUNDS = 2;
 
 function runBenchmark(name, fn) {
@@ -123,9 +126,20 @@ function runBenchmark(name, fn) {
       fn(pwd);
     }
   }
+  // Probe: one full pass to estimate time per iteration
+  const probeStart = performance.now();
+  for (const pwd of PASSWORDS) {
+    fn(pwd);
+  }
+  const probeElapsed = performance.now() - probeStart;
+  const iterations = Math.max(
+    1,
+    Math.min(MAX_ITERATIONS, Math.floor(TARGET_MS / probeElapsed))
+  );
+  // Timed run
   const start = performance.now();
   let count = 0;
-  for (let i = 0; i < ITERATIONS; i++) {
+  for (let i = 0; i < iterations; i++) {
     for (const pwd of PASSWORDS) {
       fn(pwd);
       count++;
@@ -133,7 +147,7 @@ function runBenchmark(name, fn) {
   }
   const elapsed = performance.now() - start;
   const opsPerSec = Math.round((count / elapsed) * 1000);
-  return { name, opsPerSec, elapsed: Math.round(elapsed) };
+  return { name, opsPerSec, elapsed: Math.round(elapsed), iterations };
 }
 
 const results = [];
@@ -144,6 +158,21 @@ try {
   results.push(runBenchmark('ts-zxcvbn', (pwd) => zxcvbn(pwd)));
 } catch (err) {
   console.error('ts-zxcvbn: not installed or failed to load', err.message);
+}
+
+// --- ts-zxcvbn with optional lists (largest password list + English names) ---
+try {
+  const { default: zxcvbn } = await import('ts-zxcvbn');
+  const { default: passwordsList } =
+    await import('ts-zxcvbn/frequencies/passwords');
+  const { default: namesEn } = await import('ts-zxcvbn/names/english');
+  const fn = (pwd) => zxcvbn(pwd, { passwords: passwordsList, names: namesEn });
+  results.push(runBenchmark('ts-zxcvbn (passwords + names)', fn));
+} catch (err) {
+  console.error(
+    'ts-zxcvbn (passwords + names): not installed or failed to load',
+    err.message
+  );
 }
 
 // --- zxcvbn (Dropbox original, CJS) ---
@@ -199,17 +228,17 @@ if (results.length === 0) {
 console.log(
   '\nPerformance (same password set, ' +
     PASSWORDS.length +
-    ' passwords × ' +
-    ITERATIONS +
-    ' iterations)\n'
+    ' passwords, ~' +
+    TARGET_MS / 1000 +
+    's target per implementation, iteration count varies)\n'
 );
 const maxOps = Math.max(...results.map((r) => r.opsPerSec));
 for (const r of results.sort((a, b) => b.opsPerSec - a.opsPerSec)) {
   const bar =
     '█'.repeat(Math.round((r.opsPerSec / maxOps) * 20)) +
     '░'.repeat(20 - Math.round((r.opsPerSec / maxOps) * 20));
-console.log(
-  `  ${r.name.padEnd(22)} ${String(r.opsPerSec).padStart(6)} ops/sec  ${r.elapsed} ms  ${bar}`
+  console.log(
+    `  ${r.name.padEnd(28)} ${String(r.opsPerSec).padStart(6)} ops/sec  ${String(r.elapsed).padStart(5)} ms  (${r.iterations} it)  ${bar}`
   );
 }
 console.log('');

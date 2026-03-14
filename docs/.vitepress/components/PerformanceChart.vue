@@ -52,7 +52,7 @@ function vsZxcvbn(ops: number): string {
       </tbody>
     </table>
     <p class="perf-chart-caption">
-      Example run (same password set, 95 passwords × 200 iterations). To refresh this chart with your machine’s results, run
+      Example run (same password set, 95 passwords, ~5s target per implementation). To refresh this chart with your machine’s results, run
       <code>npm run benchmark:update-docs</code>; for a one-off comparison, run <code>npm run benchmark</code>. “vs zxcvbn” is speed relative to the original library (1× = same speed).
     </p>
   </div>

@@ -1,18 +1,22 @@
 [
   {
     "name": "ts-zxcvbn",
-    "opsPerSec": 66021
+    "opsPerSec": 64401
   },
   {
     "name": "zxcvbn",
-    "opsPerSec": 8901
+    "opsPerSec": 7854
   },
   {
     "name": "zxcvbn-typescript",
-    "opsPerSec": 7739
+    "opsPerSec": 6817
   },
   {
     "name": "@zxcvbn-ts/core",
-    "opsPerSec": 2440
+    "opsPerSec": 2163
+  },
+  {
+    "name": "ts-zxcvbn (passwords + names)",
+    "opsPerSec": 268
   }
 ]
