@@ -20,32 +20,52 @@ function build_ranked_dict(ordered_list: readonly string[]): Record<string, numb
   return result;
 }
 
+/** Cache sanitized list + ranked dict per list reference so repeated calls with same options reuse work. */
+const listCache = new WeakMap<
+  object,
+  { sanitized: string[]; ranked: Record<string, number> }
+>();
+
+function get_sanitized_and_ranked(
+  list: unknown[] | undefined | null
+): { sanitized: string[]; ranked: Record<string, number> } {
+  if (list == null || !Array.isArray(list)) {
+    return { sanitized: [], ranked: {} };
+  }
+  let entry = listCache.get(list);
+  if (!entry) {
+    const sanitized = sanitize_string_list(list);
+    const ranked = build_ranked_dict(sanitized);
+    entry = { sanitized, ranked };
+    listCache.set(list, entry);
+  }
+  return entry;
+}
+
 const zxcvbn = function (password: string, options?: ZxcvbnOptions | null): Result {
   const normalizedOptions =
     options && typeof options === 'object' ? options : undefined;
 
-  const user_inputs: string[] =
-    normalizedOptions != null
-      ? sanitize_string_list(normalizedOptions.user_inputs ?? [])
-      : [];
-
-  const names: string[] =
-    normalizedOptions != null ? sanitize_string_list(normalizedOptions.names ?? []) : [];
-
-  const passwords_list: string[] =
+  const { sanitized: user_inputs, ranked: user_inputs_ranked } = get_sanitized_and_ranked(
+    normalizedOptions?.user_inputs ?? null
+  );
+  const { sanitized: names, ranked: names_ranked } = get_sanitized_and_ranked(
+    normalizedOptions?.names ?? null
+  );
+  const { sanitized: passwords_list, ranked: passwords_ranked } =
     normalizedOptions != null && Array.isArray(normalizedOptions.passwords)
-      ? sanitize_string_list(normalizedOptions.passwords)
-      : [];
+      ? get_sanitized_and_ranked(normalizedOptions.passwords)
+      : { sanitized: [] as string[], ranked: {} as Record<string, number> };
 
   const ranked_dictionaries: Record<string, Record<string, number>> = {};
   if (passwords_list.length > 0) {
-    ranked_dictionaries['passwords'] = build_ranked_dict(passwords_list);
+    ranked_dictionaries['passwords'] = passwords_ranked;
   }
   if (user_inputs.length > 0) {
-    ranked_dictionaries['user_inputs'] = build_ranked_dict(user_inputs);
+    ranked_dictionaries['user_inputs'] = user_inputs_ranked;
   }
   if (names.length > 0) {
-    ranked_dictionaries['names'] = build_ranked_dict(names);
+    ranked_dictionaries['names'] = names_ranked;
   }
 
   matching.set_ranked_dictionaries(ranked_dictionaries);

@@ -39,11 +39,11 @@ Typical CLI output (format may vary slightly):
 ```
 Performance (same password set, 95 passwords, ~5s target per implementation, iteration count varies)
 
-  ts-zxcvbn                      64401 ops/sec    295 ms  (200 it)  ████████████████████
-  zxcvbn                          7854 ops/sec   2419 ms  (200 it)  ██░░░░░░░░░░░░░░░░░░
-  zxcvbn-typescript               6817 ops/sec   2787 ms  (200 it)  ██░░░░░░░░░░░░░░░░░░
-  @zxcvbn-ts/core                 2163 ops/sec   4832 ms  (110 it)  █░░░░░░░░░░░░░░░░░░░
-  ts-zxcvbn (passwords + names)    268 ops/sec   4612 ms  ( 13 it)  ░░░░░░░░░░░░░░░░░░░░
+  ts-zxcvbn                     64383 ops/sec    295 ms  (200 it)  ████████████████████
+  ts-zxcvbn (passwords + names)  21272 ops/sec    893 ms  (200 it)  ███████░░░░░░░░░░░░░
+  zxcvbn                         8311 ops/sec   2286 ms  (200 it)  ███░░░░░░░░░░░░░░░░░
+  zxcvbn-typescript              7290 ops/sec   2606 ms  (200 it)  ██░░░░░░░░░░░░░░░░░░
+  @zxcvbn-ts/core                2241 ops/sec   4747 ms  (112 it)  █░░░░░░░░░░░░░░░░░░░
 ```
 
 ## Caveats

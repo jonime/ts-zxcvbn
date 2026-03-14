@@ -110,4 +110,70 @@ describe('zxcvbn', () => {
     expect(result.score).toBe(0);
     expect(result.feedback.warning).toBe(Warning.Sequence);
   });
+
+  describe('repeated calls with shared list references (memoization)', () => {
+    it('produces identical results when same options object is reused', () => {
+      const sharedPasswords = ['password', '123456', 'qwerty'];
+      const sharedNames = ['joni', 'antti'];
+      const options = { passwords: sharedPasswords, names: sharedNames };
+
+      const r1 = zxcvbn('password', options);
+      const r2 = zxcvbn('password', options);
+
+      expect(r1.score).toBe(r2.score);
+      expect(r1.guesses).toBe(r2.guesses);
+      expect(r1.feedback.warning).toBe(r2.feedback.warning);
+      expect(r1.sequence.length).toBe(r2.sequence.length);
+    });
+
+    it('produces correct scores and warnings across many repeated calls with shared lists', () => {
+      const passwords = ['weak', 'common', 'secret'];
+      const names = ['alice', 'bob'];
+      const options = { passwords, names };
+
+      for (let i = 0; i < 20; i++) {
+        const result = zxcvbn('weak', options);
+        expect(result.score).toBe(0);
+        const match = result.sequence.find(
+          (m) => m.pattern === 'dictionary' && m.dictionary_name === 'passwords'
+        );
+        expect(match).toBeDefined();
+        expect(match?.matched_word).toBe('weak');
+      }
+
+      for (let i = 0; i < 20; i++) {
+        const result = zxcvbn('alice', options);
+        expect(result.feedback.warning).toBe(Warning.Name);
+        const match = result.sequence.find(
+          (m) => m.pattern === 'dictionary' && m.dictionary_name === 'names'
+        );
+        expect(match).toBeDefined();
+        expect(match?.matched_word).toBe('alice');
+      }
+    });
+
+    it('treats different list references independently (no cross-call pollution)', () => {
+      const result1 = zxcvbn('onlyinfirst', {
+        user_inputs: ['onlyinfirst'],
+      });
+      expect(result1.score).toBe(0);
+      expect(
+        result1.sequence.some(
+          (m) =>
+            m.pattern === 'dictionary' && m.dictionary_name === 'user_inputs'
+        )
+      ).toBe(true);
+
+      const result2 = zxcvbn('onlyinfirst', {
+        user_inputs: ['otherinput'],
+      });
+      expect(result2.score).toBeGreaterThan(0);
+      expect(
+        result2.sequence.some(
+          (m) =>
+            m.pattern === 'dictionary' && m.dictionary_name === 'user_inputs'
+        )
+      ).toBe(false);
+    });
+  });
 });
