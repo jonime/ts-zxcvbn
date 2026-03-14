@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/jonime/ts-zxcvbn/compare/v7.0.0...v7.0.1) (2026-03-14)
+
+
+### Bug Fixes
+
+* Improve perfomance with frequency lists ([7b60522](https://github.com/jonime/ts-zxcvbn/commit/7b605222456508a4f6fc686af9f286d7ea6279ca))
+
 # [7.0.0](https://github.com/jonime/ts-zxcvbn/compare/v6.1.1...v7.0.0) (2026-03-13)
 
 
