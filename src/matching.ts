@@ -107,7 +107,7 @@ const matching = {
   mod(n: number, m: number): number {
     return ((n % m) + m) % m;
   },
-  sorted(matches: Match[]): Match[] {
+  sorted<T extends Match>(matches: T[]): T[] {
     return matches.sort((m1, m2) => m1.i - m2.i || m1.j - m2.j);
   },
 
