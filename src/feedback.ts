@@ -40,9 +40,6 @@ const feedback = {
 
     if (f != null) {
       f.suggestions.unshift(extra_feedback);
-      if (f.warning == null) {
-        f.warning = null;
-      }
     } else {
       f = {
         warning: null,
@@ -55,7 +52,7 @@ const feedback = {
   get_match_feedback(
     match: Match,
     is_sole_match: boolean
-  ): { warning: Warning; suggestions: string[] } {
+  ): Feedback | undefined {
     switch (match.pattern) {
       case 'dictionary':
         return feedback.get_dictionary_match_feedback(match, is_sole_match);
@@ -102,12 +99,13 @@ const feedback = {
           suggestions: ['Avoid dates and years that are associated with you'],
         };
     }
+    return undefined;
   },
 
   get_dictionary_match_feedback(
     match: DictionaryMatch,
     is_sole_match: boolean
-  ): { warning: Warning; suggestions: string[] } {
+  ): Feedback {
     let warning: Warning | null = null;
     switch (match.dictionary_name) {
       case 'passwords':
