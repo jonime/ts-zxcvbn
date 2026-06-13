@@ -3,7 +3,7 @@
   "private": true,
   "description": "In-repo consumer to verify CJS/ESM packaging of ts-zxcvbn",
   "dependencies": {
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.28.1",
     "ts-zxcvbn": "file:../.."
   },
   "scripts": {
