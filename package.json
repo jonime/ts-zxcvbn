@@ -54,7 +54,7 @@
     "benchmark:update-docs": "cd benchmark && npm install && node run.mjs --out=../docs/benchmark-results.json"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/changelog": "7.0.0",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/git": "10.0.1",
     "@semantic-release/github": "12.0.9",
