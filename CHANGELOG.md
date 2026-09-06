@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/jonime/ts-zxcvbn/compare/v7.0.1...v7.0.2) (2026-09-06)
+
+
+### Bug Fixes
+
+* upgrade VitePress and remove dependency overrides ([5e4f528](https://github.com/jonime/ts-zxcvbn/commit/5e4f528ff6f401082163e64c3230a226387a5916))
+
 ## [7.0.1](https://github.com/jonime/ts-zxcvbn/compare/v7.0.0...v7.0.1) (2026-03-14)
 
 
