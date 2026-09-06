@@ -40,7 +40,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:packaging": "npm run build && node tests/packaging/check-bundle-size.mjs && cd tests/packaging && npm install && npm test",
-    "build": "npm run build-name-lists && npm run build-frequency-lists && tsup",
+    "build": "npm run build-name-lists && npm run build-frequency-lists && tsdown",
     "build-name-lists": "tsx data-scripts/build_name_lists.ts",
     "prepare": "npm run build",
     "build-lists": "npm run build-frequency-lists && npm run build-keyboard-adjacency-graphs",
@@ -61,14 +61,14 @@
     "@semantic-release/npm": "13.1.5",
     "@semantic-release/release-notes-generator": "14.1.1",
     "conventional-changelog-conventionalcommits": "10.4.0",
-    "vitest": "4.1.11",
     "prettier": "3.9.6",
     "rimraf": "6.1.3",
     "semantic-release": "25.0.9",
-    "tsup": "8.5.1",
+    "tsdown": "0.23.0",
     "tsx": "4.23.13",
     "typescript": "6.0.3",
-    "vitepress": "2.0.0-alpha.20"
+    "vitepress": "2.0.0-alpha.20",
+    "vitest": "4.1.11"
   },
   "keywords": [
     "password",
