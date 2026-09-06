@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: [
@@ -14,5 +14,10 @@ export default defineConfig({
   minify: true,
   clean: true,
   splitting: false,
+  cjsDefault: false,
   target: 'es2015',
+  outExtensions: ({ format }) => ({
+    js: format === 'cjs' ? '.js' : '.mjs',
+    dts: '.d.ts',
+  }),
 });
