@@ -68,7 +68,7 @@
     "tsx": "4.23.13",
     "typescript": "6.0.3",
     "vitepress": "2.0.0-alpha.20",
-    "vitest": "4.1.11"
+    "vitest": "5.0.0"
   },
   "keywords": [
     "password",
